@@ -1,0 +1,12 @@
+node_modules/
+dist/
+coverage/
+playwright-report/
+test-results/
+.local-data/
+*.xml
+*.xlsx
+*.local.xml
+*.local.xlsx
+.env
+.env.*
