@@ -3,15 +3,15 @@ import userEvent from "@testing-library/user-event";
 import { App } from "./App";
 
 describe("PHE Space Simulator", () => {
-  it("starts at T1a Monday 08:00 and shows XML class names", () => {
+  it("starts at T1a Monday 08:00 and renders the day's occupancy on the timeline", () => {
     render(<App />);
-    expect(screen.getByRole("heading", { level: 1, name: "PHE Space Simulator" })).toBeInTheDocument();
+    expect(screen.getByText("PHE Space Simulator")).toBeInTheDocument();
     expect(screen.getByLabelText("Term")).toHaveValue("T1a");
     expect(screen.getByLabelText("Day")).toHaveValue("0");
     expect(screen.getAllByText("08:00").length).toBeGreaterThan(0);
-    expect(screen.getByText("2MZ (Boys) — Gymnastics")).toBeVisible();
-    expect(screen.getByText("2MZ (Girls) — Swimming")).toBeVisible();
-    expect(screen.getByText("3LC + 3DR (Boys) — Adventure Challenge")).toBeVisible();
+    // the gantt shows Monday's PHE occupancy as bars (title carries space · cohort · unit · time)
+    expect(screen.getAllByTitle(/Grade 2 Boys.*Gymnastics/).length).toBeGreaterThan(0);
+    expect(screen.getAllByTitle(/Grade 2 Girls.*Swimming/).length).toBeGreaterThan(0);
   });
 
   it("changes term and steps through real timetable boundaries", async () => {
@@ -56,8 +56,8 @@ describe("PHE Space Simulator", () => {
     await user.click(screen.getByRole("button", { name: "Test plan in simulator" }));
 
     expect(screen.getByLabelText("Term")).toHaveValue("T1a");
-    expect(screen.getByText("2MZ (Boys) — Gymnastics")).toBeVisible();
-    expect(screen.getByLabelText("Main Pitch 1: 1 / 2")).toContainElement(screen.getByText("2MZ (Boys) — Gymnastics"));
+    // Grade 2 Boys now appears on the Main Pitch 1 lane of the timeline
+    expect(screen.getAllByTitle(/Main Pitch 1.*Grade 2 Boys.*Gymnastics/).length).toBeGreaterThan(0);
   }, 15_000);
 
   it("swaps term blocks and uses preset staff objects", async () => {

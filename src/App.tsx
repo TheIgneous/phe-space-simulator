@@ -1,11 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BUNDLED_SNAPSHOT, fetchSnapshot } from "./loadDataset";
-import { ControlBar } from "./components/ControlBar";
-import { DayTimeline } from "./components/DayTimeline";
-import { FacilityBoard } from "./components/FacilityBoard";
-import { IssuesPanel } from "./components/IssuesPanel";
-import { TimeScrubber } from "./components/TimeScrubber";
-import { TimetableImport } from "./components/TimetableImport";
+import { SimulatorView } from "./components/SimulatorView";
 import { PlanPage } from "./components/PlanPage";
 import { ClassTimetablePage } from "./components/ClassTimetablePage";
 import { YearOverviewPage } from "./components/YearOverviewPage";
@@ -13,14 +8,13 @@ import {
   DAY_END,
   findAdjacentStep,
   getCurrentIssues,
-  getFacilityViews,
   getStepTimes,
   getTermIssues,
 } from "./domain/simulation";
 import { applyPlanAssignments } from "./domain/plan";
 import { mergeStaffMembers } from "./domain/staff";
 import { BASE_UNITS, mergeUnits } from "./domain/units";
-import { DAYS, type DayIndex, type FacilityId, type Issue, type PheAssignment, type Selection, type SimulationDataset, type TermId, type WeekId } from "./types";
+import { type DayIndex, type FacilityId, type PheAssignment, type Selection, type SimulationDataset, type TermId, type WeekId } from "./types";
 
 type ViewId = "simulator" | "plan" | "classes" | "overview";
 const VIEW_TABS: Array<{ id: ViewId; label: string }> = [
@@ -41,7 +35,6 @@ export function App() {
   const [draftAssignments, setDraftAssignments] = useState<PheAssignment[]>(() => initialDataset.assignments.map((assignment) => ({ ...assignment, teachers: [...assignment.teachers] })));
   const [extraUnits, setExtraUnits] = useState<string[]>([]);
 
-  const facilityViews = useMemo(() => getFacilityViews(dataset, selection), [dataset, selection]);
   const termIssues = useMemo(() => getTermIssues(dataset, selection.term, selection.week), [dataset, selection.term, selection.week]);
   const currentIssues = useMemo(() => getCurrentIssues(termIssues, selection), [termIssues, selection]);
   const stepTimes = useMemo(
@@ -112,12 +105,6 @@ export function App() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [step]);
 
-  const jumpToIssue = useCallback((issue: Issue) => {
-    if (issue.day === undefined || issue.start === undefined) return;
-    setIsPlaying(false);
-    setSelection((current) => ({ ...current, day: issue.day!, time: issue.start! }));
-  }, []);
-
   return (
     <main className="app-frame">
       <nav className="view-tabs no-print" aria-label="Viewer pages">
@@ -183,45 +170,26 @@ export function App() {
             setView("simulator");
           }}
         />
-      ) : (<>
-      <ControlBar
-        selection={selection}
-        isPlaying={isPlaying}
-        onTermChange={(term: TermId) => updateSelection({ term })}
-        onWeekChange={(week: WeekId) => updateSelection({ week })}
-        onDayChange={(day: DayIndex) => updateSelection({ day })}
-        onPlayToggle={() => setIsPlaying((current) => !current)}
-        onStep={step}
-        onReset={() => {
-          setIsPlaying(false);
-          setSelection(INITIAL_SELECTION);
-        }}
-      />
-      <TimeScrubber
-        value={selection.time}
-        onChange={(time) => {
-          setIsPlaying(false);
-          updateSelection({ time });
-        }}
-      />
-      <div className="workspace">
-        <div className="operations-canvas">
-          <FacilityBoard views={facilityViews} />
-          <DayTimeline day={DAYS[selection.day]} periods={dataset.periods} currentTime={selection.time} />
-        </div>
-        <IssuesPanel
-          selection={selection}
-          currentIssues={currentIssues}
-          termIssues={termIssues}
-          warnings={dataset.warnings}
-          onJump={jumpToIssue}
-        />
-      </div>
-      <footer className="data-provenance">
-        <span>Sanitized snapshot generated {new Date(dataset.metadata.generatedAt).toLocaleDateString("en-GB")}</span>
-        <span>{dataset.metadata.sources.map((source) => source.name).join(" · ")}</span>
-        <TimetableImport
+      ) : (
+        <SimulatorView
           dataset={dataset}
+          selection={selection}
+          isPlaying={isPlaying}
+          termIssues={termIssues}
+          currentIssues={currentIssues}
+          onTermChange={(term: TermId) => updateSelection({ term })}
+          onWeekChange={(week: WeekId) => updateSelection({ week })}
+          onDayChange={(day: DayIndex) => updateSelection({ day })}
+          onPlayToggle={() => setIsPlaying((current) => !current)}
+          onStep={step}
+          onReset={() => {
+            setIsPlaying(false);
+            setSelection(INITIAL_SELECTION);
+          }}
+          onScrub={(time) => {
+            setIsPlaying(false);
+            updateSelection({ time });
+          }}
           onImport={(nextDataset) => {
             setIsPlaying(false);
             setSelection(INITIAL_SELECTION);
@@ -229,8 +197,7 @@ export function App() {
             setDraftAssignments(nextDataset.assignments.map((assignment) => ({ ...assignment, teachers: [...assignment.teachers] })));
           }}
         />
-      </footer>
-      </>)}
+      )}
     </main>
   );
 }

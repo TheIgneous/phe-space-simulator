@@ -450,3 +450,108 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
   tr, td, th, li, .class-session { break-inside: avoid; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* ============================================================
+   Simulator viewer — timeline-gantt redesign (scoped to .sim-v2)
+   ============================================================ */
+.sim-v2 { font-family: 'Public Sans', system-ui, sans-serif; color: #16202e; -webkit-font-smoothing: antialiased; }
+.sim-v2 .sv-card { background: #fff; border: 1px solid #d9dee6; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 2px rgba(16,32,46,.04), 0 12px 30px -22px rgba(16,32,46,.22); }
+
+.sim-v2 .sv-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 18px 26px; border-bottom: 1px solid #edf0f4; }
+.sim-v2 .sv-brand-name { font-size: 18px; font-weight: 800; letter-spacing: -.01em; color: #16202e; }
+.sim-v2 .sv-brand-sub { margin-top: 2px; font-size: 11px; color: #8a94a1; font-family: 'IBM Plex Mono', monospace; }
+.sim-v2 .sv-controls { display: flex; gap: 6px; }
+.sim-v2 .sv-pill { display: flex; align-items: center; gap: 7px; height: 34px; padding: 0 10px 0 12px; background: #f1f3f7; border: 1px solid #e2e7ee; border-radius: 8px; }
+.sim-v2 .sv-pill > span { color: #9aa3af; font-weight: 500; font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+.sim-v2 .sv-pill select { border: 0; padding: 0 2px; background: transparent; font: 600 12.5px 'Public Sans', sans-serif; color: #16202e; cursor: pointer; }
+.sim-v2 .sv-pill select:focus-visible { outline: 2px solid rgba(31,58,95,.4); outline-offset: 3px; }
+
+.sim-v2 .sv-body { display: flex; align-items: stretch; }
+.sim-v2 .sv-rail { width: 204px; flex: none; padding: 18px; border-right: 1px solid #edf0f4; background: #fafbfc; display: flex; flex-direction: column; gap: 13px; }
+.sim-v2 .sv-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #9aa3af; margin-bottom: 7px; }
+.sim-v2 .sv-clock { font-family: 'IBM Plex Mono', monospace; font-size: 32px; font-weight: 600; color: #1f3a5f; line-height: 1; }
+.sim-v2 .sv-now-sub { margin-top: 5px; font-size: 11px; color: #7a8492; }
+.sim-v2 .sv-play { display: flex; align-items: center; justify-content: center; gap: 8px; height: 38px; border: 0; border-radius: 8px; background: #1f3a5f; color: #fff; font: 600 13px 'Public Sans', sans-serif; box-shadow: 0 1px 2px rgba(31,58,95,.25); cursor: pointer; }
+.sim-v2 .sv-transport { display: flex; gap: 7px; }
+.sim-v2 .sv-transport button { flex: 1; height: 34px; display: flex; align-items: center; justify-content: center; border: 1px solid #d9dee6; border-radius: 8px; background: #fff; color: #5a6573; cursor: pointer; }
+.sim-v2 .sv-transport button:hover, .sim-v2 .sv-play:hover { filter: brightness(.98); }
+.sim-v2 .sv-hint { margin: 0; font-size: 10.5px; line-height: 1.5; color: #9aa3af; }
+.sim-v2 .sv-rail-section { border-top: 1px solid #e8ebf0; padding-top: 12px; }
+.sim-v2 .sv-check { display: flex; align-items: center; gap: 8px; padding: 3px 0; font-size: 11px; color: #5a6573; }
+.sim-v2 .sv-dot { width: 6px; height: 6px; border-radius: 50%; flex: none; }
+.sim-v2 .sv-dot-ok { background: #2c8059; }
+.sim-v2 .sv-dot-warn { background: #b07d1a; }
+.sim-v2 .sv-warn-toggle { display: flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: #8a94a1; font: 600 11px 'Public Sans', sans-serif; cursor: pointer; }
+.sim-v2 .sv-warn-list { margin: 8px 0 0; padding-left: 16px; max-height: 150px; overflow: auto; font-size: 10.5px; color: #7a8492; }
+.sim-v2 .sv-warn-list li + li { margin-top: 5px; }
+
+.sim-v2 .sv-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.sim-v2 .sv-summary { display: flex; align-items: stretch; border-bottom: 1px solid #edf0f4; background: #fafbfc; }
+.sim-v2 .sv-summary-status { flex: 1; display: flex; align-items: center; gap: 10px; padding: 13px 26px; border-right: 1px solid #edf0f4; }
+.sim-v2 .sv-summary-status.is-ok svg { color: #2c8059; }
+.sim-v2 .sv-summary-status.is-clash svg { color: #c2503c; }
+.sim-v2 .sv-summary-status strong { display: block; font-size: 13px; font-weight: 700; color: #226046; }
+.sim-v2 .sv-summary-status.is-clash strong { color: #9a3528; }
+.sim-v2 .sv-summary-status small { font-size: 10.5px; color: #8a94a1; }
+.sim-v2 .sv-summary-counts { width: 318px; flex: none; display: flex; flex-direction: column; gap: 7px; justify-content: center; padding: 11px 22px; }
+.sim-v2 .sv-count { display: flex; align-items: center; justify-content: space-between; padding: 6px 12px; border-radius: 7px; font-size: 11.5px; font-weight: 600; }
+.sim-v2 .sv-count b { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; }
+.sim-v2 .sv-count-workable { background: #fcefec; border: 1px solid #f1d8d1; color: #a8493a; }
+.sim-v2 .sv-count-workable b { color: #c2503c; }
+.sim-v2 .sv-count-nonworkable { background: #f7e0db; border: 1px solid #e8bcb2; color: #9a3528; }
+.sim-v2 .sv-count-nonworkable b { color: #b53d2e; }
+
+.sim-v2 .sv-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 13px 26px; border-top: 1px solid #edf0f4; background: #fafbfc; }
+.sim-v2 .sv-foot-meta { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 11px; color: #9aa3af; font-family: 'IBM Plex Mono', monospace; }
+.sim-v2 .sv-foot-meta span:nth-child(2) { color: #7a8492; }
+
+/* timeline gantt */
+.sim-v2 .tl { padding: 18px 26px 22px; }
+.sim-v2 .tl-ruler { display: flex; margin-bottom: 7px; }
+.sim-v2 .tl-gutter { width: 150px; flex: none; }
+.sim-v2 .tl-axis { position: relative; flex: 1; height: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #aeb6c0; }
+.sim-v2 .tl-axis span { position: absolute; transform: translateX(-50%); }
+.sim-v2 .tl-grid { position: relative; }
+.sim-v2 .tl-scrub { position: absolute; left: 150px; right: 0; top: 0; bottom: 0; z-index: 5; cursor: ew-resize; touch-action: none; }
+.sim-v2 .tl-playhead { position: absolute; top: 0; bottom: 0; width: 2px; background: #1f3a5f; z-index: 6; pointer-events: none; }
+.sim-v2 .tl-playhead span { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); padding: 2px 6px; border-radius: 4px; background: #1f3a5f; color: #fff; font: 600 9.5px 'IBM Plex Mono', monospace; white-space: nowrap; }
+.sim-v2 .tl-periods { display: flex; flex-direction: column; gap: 5px; margin-bottom: 11px; }
+.sim-v2 .tl-period-row { display: flex; align-items: center; }
+.sim-v2 .tl-period-label { width: 150px; flex: none; padding-right: 12px; font-size: 10px; font-weight: 700; }
+.sim-v2 .tl-period-label.tl-pyp { color: #1f3a5f; }
+.sim-v2 .tl-period-label.tl-myp { color: #2f7d70; }
+.sim-v2 .tl-period-track { position: relative; flex: 1; height: 18px; background: #f5f7fa; border-radius: 5px; }
+.sim-v2 .tl-period-block { position: absolute; top: 2px; bottom: 2px; display: flex; align-items: center; justify-content: center; border-radius: 4px; overflow: hidden; font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; }
+.sim-v2 .tl-period-block.tl-pyp { background: #eaeff5; border: 1px solid #cfd9e6; color: #5a6f8c; }
+.sim-v2 .tl-period-block.tl-myp { background: #edf4f2; border: 1px solid #cfe2dd; color: #37706a; }
+.sim-v2 .tl-period-block.tl-period-break { background: repeating-linear-gradient(45deg,#f3f4f6,#f3f4f6 3px,#fafbfc 3px,#fafbfc 6px); border-color: #eceef2; color: #b3bac4; }
+.sim-v2 .tl-group-label { margin: 13px 0 6px; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: #9aa3af; }
+.sim-v2 .tl-group:first-child .tl-group-label { margin-top: 2px; }
+.sim-v2 .tl-lane { display: flex; align-items: center; margin-bottom: 5px; }
+.sim-v2 .tl-lane-name { width: 150px; flex: none; padding-right: 12px; font-size: 11.5px; font-weight: 600; color: #37414e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sim-v2 .tl-lane-name-muted { color: #9aa3af; }
+.sim-v2 .tl-track { position: relative; flex: 1; height: 24px; background: #f5f7fa; border-radius: 5px; }
+.sim-v2 .tl-track-unavailable { background: repeating-linear-gradient(45deg,#f7f1e1,#f7f1e1 5px,#fbf6ea 5px,#fbf6ea 10px); }
+.sim-v2 .tl-unavailable-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #b07d1a; }
+.sim-v2 .tl-bar { position: absolute; top: 2px; bottom: 2px; display: flex; align-items: center; padding: 0 6px; border-radius: 4px; font-size: 9px; font-weight: 600; overflow: hidden; white-space: nowrap; }
+.sim-v2 .tl-bar-primary { background: #dfe7f1; border: 1px solid #b9c7dc; color: #42587a; }
+.sim-v2 .tl-bar-secondary { background: #dcebe7; border: 1px solid #b3d2c9; color: #37706a; }
+.sim-v2 .tl-bar-existing { background: #eceff3; border: 1px solid #d4dae2; color: #6b7686; }
+.sim-v2 .tl-bar-workable { background: #f4e6c4; border: 1px solid #e0c98f; color: #8a6610; }
+.sim-v2 .tl-bar-non-workable { background: #f6e1dd; border: 1px solid #e0b0a8; color: #9a3528; }
+.sim-v2 .tl-legend { display: flex; align-items: center; gap: 18px; margin-top: 18px; padding-top: 14px; border-top: 1px solid #edf0f4; font-size: 10.5px; color: #7a8492; flex-wrap: wrap; }
+.sim-v2 .tl-legend span { display: flex; align-items: center; gap: 6px; }
+.sim-v2 .tl-swatch { width: 14px; height: 10px; border-radius: 3px; }
+.sim-v2 .tl-swatch-unavailable { width: 14px; height: 10px; border-radius: 3px; background: repeating-linear-gradient(45deg,#f0e7d2,#f0e7d2 3px,#f7f1e1 3px,#f7f1e1 6px); border: 1px solid #e6d9b8; }
+.sim-v2 .tl-swatch-playhead { width: 2px; height: 12px; background: #1f3a5f; }
+
+@media (max-width: 1040px) {
+  .sim-v2 .sv-body { flex-direction: column; }
+  .sim-v2 .sv-rail { width: auto; border-right: 0; border-bottom: 1px solid #edf0f4; }
+  .sim-v2 .sv-summary { flex-direction: column; }
+  .sim-v2 .sv-summary-counts { width: auto; border-top: 1px solid #edf0f4; }
+}
+@media (max-width: 760px) {
+  .sim-v2 .tl { overflow-x: auto; }
+  .sim-v2 .tl-grid, .sim-v2 .tl-ruler { min-width: 760px; }
+}
