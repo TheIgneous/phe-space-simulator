@@ -50,6 +50,18 @@ VITE_SNAPSHOT_URL=https://<user>.github.io/phe-space-simulator/snapshot.json
 
 Leaving `VITE_SNAPSHOT_URL` unset makes an app fetch its own same-origin `./snapshot.json`. GitHub Pages serves these with permissive CORS, so cross-app fetches work. **Update the XML in `data/` once → push → every app reflects it on next load, with no per-app rebuild.**
 
+## Updating the plan (units & spaces)
+
+The **plan** — which unit and space each group gets per term — lives in `data/allocations.csv` (one row per cohort × term: `cohort,term,activity,facility,teachers`, where `activity` is the unit and `facility` is the space). CI feeds it to the ingest, overriding the units/spaces/teachers in the published snapshot. The plan and the timetable XML are updated independently.
+
+Workflow:
+
+1. In the app, open **Plan**, change units / spaces / staff, and click **Test plan in simulator** to preview the clash impact.
+2. When happy, open **Update model inputs → Download current template** — this exports your edited plan as `allocations.csv`.
+3. Replace `data/allocations.csv` with that file and push to `main`.
+
+CI re-ingests and redeploys; both apps reflect the change on next load.
+
 ## Pages
 
 - **Simulator** — minute-by-minute facility occupancy and clash detection.

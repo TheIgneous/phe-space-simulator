@@ -31,10 +31,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Regenerate snapshot from committed timetables (if present)
+      - name: Regenerate snapshot from committed timetables + plan (if present)
         run: |
           if [ -f "data/primary-timetable.xml" ] && [ -f "data/secondary-timetable.xml" ]; then
-            npm run ingest -- --primary "data/primary-timetable.xml" --secondary "data/secondary-timetable.xml"
+            ALLOC=""
+            if [ -f "data/allocations.csv" ]; then ALLOC="--allocations data/allocations.csv"; fi
+            npm run ingest -- --primary "data/primary-timetable.xml" --secondary "data/secondary-timetable.xml" $ALLOC
           else
             echo "No data/*.xml committed — building from the existing snapshot.json."
           fi

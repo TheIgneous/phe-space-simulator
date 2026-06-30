@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generatedAt": "2026-06-30T09:59:24.282Z",
+    "generatedAt": "2026-06-30T10:39:53.009Z",
     "academicYear": "2026/27",
     "sources": [
       {
@@ -10,6 +10,10 @@
       {
         "name": "secondary-timetable.xml",
         "sha256": "5e13f39aa2c10808532c1f3168cf39d9081614393042918708d7cf9deb17eae9"
+      },
+      {
+        "name": "allocations.csv",
+        "sha256": "69e45d3287b650e4a04833019c5f948d0b1c9c35d2067fd17aea9084ad153253"
       }
     ],
     "privacy": "Sanitized: no student records, names, emails, mobile numbers, or student IDs are retained."
@@ -148,46 +152,568 @@
   ],
   "assignments": [
     {
-      "cohort": "Minis",
+      "cohort": "6 Boys",
       "term": "T1a",
-      "activity": "Unit not specified",
-      "teachers": [],
-      "facilityId": "ey-gym"
+      "activity": "Up and Over",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "secondary-gym-1"
     },
     {
-      "cohort": "Minis",
+      "cohort": "6 Boys",
       "term": "T1b",
-      "activity": "Unit not specified",
-      "teachers": [],
-      "facilityId": "ey-gym"
+      "activity": "Dance Diversity",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "c2-14"
     },
     {
-      "cohort": "Minis",
+      "cohort": "6 Boys",
       "term": "T2a",
-      "activity": "Unit not specified",
-      "teachers": [],
-      "facilityId": "ey-gym"
-    },
-    {
-      "cohort": "Minis",
-      "term": "T2b",
       "activity": "Swimming",
-      "teachers": [],
-      "facilityId": "ey-pool"
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "main-pool"
     },
     {
-      "cohort": "Minis",
+      "cohort": "6 Boys",
+      "term": "T2b",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "back-pitch-1"
+    },
+    {
+      "cohort": "6 Boys",
+      "term": "T3a",
+      "activity": "Indoor Team Sports",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "secondary-gym-2"
+    },
+    {
+      "cohort": "6 Boys",
+      "term": "T3b",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "secondary-gym-2"
+    },
+    {
+      "cohort": "6 Girls",
+      "term": "T1a",
+      "activity": "Up and Over",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "tennis-courts"
+    },
+    {
+      "cohort": "6 Girls",
+      "term": "T1b",
+      "activity": "Swimming",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "main-pool"
+    },
+    {
+      "cohort": "6 Girls",
+      "term": "T2a",
+      "activity": "Dance Diversity",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "c2-14"
+    },
+    {
+      "cohort": "6 Girls",
+      "term": "T2b",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "6 Girls",
+      "term": "T3a",
+      "activity": "Indoor Team Sports",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "6 Girls",
+      "term": "T3b",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "7 Boys",
+      "term": "T1a",
+      "activity": "Wax on Wax Off",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "c2-14"
+    },
+    {
+      "cohort": "7 Boys",
+      "term": "T1b",
+      "activity": "Boundaries & Brilliance",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "7 Boys",
+      "term": "T2a",
+      "activity": "Swimming",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "main-pool"
+    },
+    {
+      "cohort": "7 Boys",
+      "term": "T2b",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "back-pitch-1"
+    },
+    {
+      "cohort": "7 Boys",
+      "term": "T3a",
+      "activity": "Indoor Team Sports",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "secondary-gym-2"
+    },
+    {
+      "cohort": "7 Boys",
+      "term": "T3b",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Miles Dibsdall"
+      ],
+      "facilityId": "secondary-gym-2"
+    },
+    {
+      "cohort": "7 Girls",
+      "term": "T1a",
+      "activity": "Swimming",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "main-pool"
+    },
+    {
+      "cohort": "7 Girls",
+      "term": "T1b",
+      "activity": "Boundaries & Brilliance",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "7 Girls",
+      "term": "T2a",
+      "activity": "Wax On Wax Off",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "c2-14"
+    },
+    {
+      "cohort": "7 Girls",
+      "term": "T2b",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "7 Girls",
+      "term": "T3a",
+      "activity": "Indoor Team Sports",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "7 Girls",
+      "term": "T3b",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Aimee Langton"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "8 Boys",
+      "term": "T1a",
+      "activity": "Parkour",
+      "teachers": [
+        "Miles Dibsdall",
+        "Stephen Whitley"
+      ],
+      "facilityId": "secondary-gym-2"
+    },
+    {
+      "cohort": "8 Boys",
+      "term": "T1b",
+      "activity": "Game Changers",
+      "teachers": [
+        "Miles Dibsdall",
+        "Stephen Whitley"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "8 Boys",
+      "term": "T2a",
+      "activity": "Swimming",
+      "teachers": [
+        "Miles Dibsdall",
+        "Stephen Whitley"
+      ],
+      "facilityId": "main-pool"
+    },
+    {
+      "cohort": "8 Boys",
+      "term": "T2b",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Miles Dibsdall",
+        "Stephen Whitley"
+      ],
+      "facilityId": "back-pitch-1"
+    },
+    {
+      "cohort": "8 Boys",
+      "term": "T3a",
+      "activity": "Indoor Team Sports",
+      "teachers": [
+        "Miles Dibsdall",
+        "Stephen Whitley"
+      ],
+      "facilityId": "secondary-gym-2"
+    },
+    {
+      "cohort": "8 Boys",
+      "term": "T3b",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Miles Dibsdall",
+        "Stephen Whitley"
+      ],
+      "facilityId": "secondary-gym-2"
+    },
+    {
+      "cohort": "8 Girls",
+      "term": "T1a",
+      "activity": "Swimming",
+      "teachers": [
+        "Aimee Langton",
+        "Charlotte Picknell"
+      ],
+      "facilityId": "main-pool"
+    },
+    {
+      "cohort": "8 Girls",
+      "term": "T1b",
+      "activity": "Game Changers",
+      "teachers": [
+        "Aimee Langton",
+        "Charlotte Picknell"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "8 Girls",
+      "term": "T2a",
+      "activity": "Parkour",
+      "teachers": [
+        "Aimee Langton",
+        "Charlotte Picknell"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "8 Girls",
+      "term": "T2b",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Aimee Langton",
+        "Charlotte Picknell"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "8 Girls",
+      "term": "T3a",
+      "activity": "Indoor Team Sports",
+      "teachers": [
+        "Aimee Langton",
+        "Charlotte Picknell"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "8 Girls",
+      "term": "T3b",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Aimee Langton",
+        "Charlotte Picknell"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "9 Boys",
+      "term": "T1a",
+      "activity": "Personal Exercise Plan",
+      "teachers": [
+        "Stephen Whitley"
+      ],
+      "facilityId": "fitness-suite"
+    },
+    {
+      "cohort": "9 Boys",
+      "term": "T1b",
+      "activity": "Team Sports",
+      "teachers": [
+        "Stephen Whitley"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "9 Boys",
+      "term": "T2a",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Stephen Whitley"
+      ],
+      "facilityId": "back-pitch-1"
+    },
+    {
+      "cohort": "9 Boys",
+      "term": "T2b",
+      "activity": "Lifesaving",
+      "teachers": [
+        "Stephen Whitley"
+      ],
+      "facilityId": "main-pool"
+    },
+    {
+      "cohort": "9 Boys",
       "term": "T3a",
       "activity": "Unit not specified",
-      "teachers": [],
-      "facilityId": "ey-gym"
+      "teachers": [
+        "Stephen Whitley"
+      ],
+      "facilityId": "tennis-courts"
     },
     {
-      "cohort": "Minis",
+      "cohort": "9 Boys",
       "term": "T3b",
-      "activity": "Swimming",
-      "teachers": [],
-      "facilityId": "side-pool"
+      "activity": "Unit not specified",
+      "teachers": [
+        "Stephen Whitley"
+      ],
+      "facilityId": "c2-14"
+    },
+    {
+      "cohort": "9 Girls",
+      "term": "T1a",
+      "activity": "Lifesaving",
+      "teachers": [
+        "Charlotte Picknell"
+      ],
+      "facilityId": "main-pool"
+    },
+    {
+      "cohort": "9 Girls",
+      "term": "T1b",
+      "activity": "Personal Exericse Plan",
+      "teachers": [
+        "Charlotte Picknell"
+      ],
+      "facilityId": "fitness-suite"
+    },
+    {
+      "cohort": "9 Girls",
+      "term": "T2a",
+      "activity": "Indoor Team Sports",
+      "teachers": [
+        "Charlotte Picknell"
+      ],
+      "facilityId": "secondary-gym-2"
+    },
+    {
+      "cohort": "9 Girls",
+      "term": "T2b",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Charlotte Picknell"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "9 Girls",
+      "term": "T3a",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Charlotte Picknell"
+      ],
+      "facilityId": "tennis-courts"
+    },
+    {
+      "cohort": "9 Girls",
+      "term": "T3b",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Charlotte Picknell"
+      ],
+      "facilityId": "fitness-suite"
+    },
+    {
+      "cohort": "10 Boys",
+      "term": "T1a",
+      "activity": "Football/ Fitness?",
+      "teachers": [
+        "Stephen Whitley",
+        "Miles Dibsdall"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "10 Boys",
+      "term": "T1b",
+      "activity": "Rugby",
+      "teachers": [
+        "Stephen Whitley",
+        "Miles Dibsdall"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "10 Boys",
+      "term": "T2a",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Stephen Whitley",
+        "Miles Dibsdall"
+      ],
+      "facilityId": "back-pitch-1"
+    },
+    {
+      "cohort": "10 Boys",
+      "term": "T2b",
+      "activity": "Water Games",
+      "teachers": [
+        "Stephen Whitley",
+        "Miles Dibsdall"
+      ],
+      "facilityId": "main-pool"
+    },
+    {
+      "cohort": "10 Boys",
+      "term": "T3a",
+      "activity": "Indoor Team Sports",
+      "teachers": [
+        "Stephen Whitley",
+        "Miles Dibsdall"
+      ],
+      "facilityId": "c2-14"
+    },
+    {
+      "cohort": "10 Boys",
+      "term": "T3b",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Stephen Whitley",
+        "Miles Dibsdall"
+      ],
+      "facilityId": "fitness-suite"
+    },
+    {
+      "cohort": "10 Girls",
+      "term": "T1a",
+      "activity": "Water Games",
+      "teachers": [
+        "Charlotte Picknell",
+        "Aimee Langton"
+      ],
+      "facilityId": "main-pool"
+    },
+    {
+      "cohort": "10 Girls",
+      "term": "T1b",
+      "activity": "Netball",
+      "teachers": [
+        "Charlotte Picknell",
+        "Aimee Langton"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "10 Girls",
+      "term": "T2a",
+      "activity": "Indoor Sports",
+      "teachers": [
+        "Charlotte Picknell",
+        "Aimee Langton"
+      ],
+      "facilityId": "secondary-gym-1"
+    },
+    {
+      "cohort": "10 Girls",
+      "term": "T2b",
+      "activity": "Outdoor Team Sports",
+      "teachers": [
+        "Charlotte Picknell",
+        "Aimee Langton"
+      ],
+      "facilityId": "main-pitch-1"
+    },
+    {
+      "cohort": "10 Girls",
+      "term": "T3a",
+      "activity": "Indoor Team Sports",
+      "teachers": [
+        "Charlotte Picknell",
+        "Aimee Langton"
+      ],
+      "facilityId": "fitness-suite"
+    },
+    {
+      "cohort": "10 Girls",
+      "term": "T3b",
+      "activity": "Unit not specified",
+      "teachers": [
+        "Charlotte Picknell",
+        "Aimee Langton"
+      ],
+      "facilityId": "c2-14"
     },
     {
       "cohort": "EY1",
@@ -790,568 +1316,46 @@
       "facilityId": "main-pool"
     },
     {
-      "cohort": "6 Girls",
+      "cohort": "Minis",
       "term": "T1a",
-      "activity": "Up and Over",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "tennis-courts"
+      "activity": "Unit not specified",
+      "teachers": [],
+      "facilityId": "ey-gym"
     },
     {
-      "cohort": "6 Girls",
+      "cohort": "Minis",
       "term": "T1b",
+      "activity": "Unit not specified",
+      "teachers": [],
+      "facilityId": "ey-gym"
+    },
+    {
+      "cohort": "Minis",
+      "term": "T2a",
+      "activity": "Unit not specified",
+      "teachers": [],
+      "facilityId": "ey-gym"
+    },
+    {
+      "cohort": "Minis",
+      "term": "T2b",
       "activity": "Swimming",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "main-pool"
+      "teachers": [],
+      "facilityId": "ey-pool"
     },
     {
-      "cohort": "6 Girls",
-      "term": "T2a",
-      "activity": "Dance Diversity",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "c2-14"
-    },
-    {
-      "cohort": "6 Girls",
-      "term": "T2b",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "6 Girls",
+      "cohort": "Minis",
       "term": "T3a",
-      "activity": "Indoor Team Sports",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "6 Girls",
-      "term": "T3b",
       "activity": "Unit not specified",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "secondary-gym-1"
+      "teachers": [],
+      "facilityId": "ey-gym"
     },
     {
-      "cohort": "6 Boys",
-      "term": "T1a",
-      "activity": "Up and Over",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "6 Boys",
-      "term": "T1b",
-      "activity": "Dance Diversity",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "c2-14"
-    },
-    {
-      "cohort": "6 Boys",
-      "term": "T2a",
+      "cohort": "Minis",
+      "term": "T3b",
       "activity": "Swimming",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "main-pool"
-    },
-    {
-      "cohort": "6 Boys",
-      "term": "T2b",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "back-pitch-1"
-    },
-    {
-      "cohort": "6 Boys",
-      "term": "T3a",
-      "activity": "Indoor Team Sports",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "secondary-gym-2"
-    },
-    {
-      "cohort": "6 Boys",
-      "term": "T3b",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "secondary-gym-2"
-    },
-    {
-      "cohort": "7 Girls",
-      "term": "T1a",
-      "activity": "Swimming",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "main-pool"
-    },
-    {
-      "cohort": "7 Girls",
-      "term": "T1b",
-      "activity": "Boundaries & Brilliance",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "7 Girls",
-      "term": "T2a",
-      "activity": "Wax On Wax Off",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "c2-14"
-    },
-    {
-      "cohort": "7 Girls",
-      "term": "T2b",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "7 Girls",
-      "term": "T3a",
-      "activity": "Indoor Team Sports",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "7 Girls",
-      "term": "T3b",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Aimee Langton"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "7 Boys",
-      "term": "T1a",
-      "activity": "Wax on Wax Off",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "c2-14"
-    },
-    {
-      "cohort": "7 Boys",
-      "term": "T1b",
-      "activity": "Boundaries & Brilliance",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "7 Boys",
-      "term": "T2a",
-      "activity": "Swimming",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "main-pool"
-    },
-    {
-      "cohort": "7 Boys",
-      "term": "T2b",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "back-pitch-1"
-    },
-    {
-      "cohort": "7 Boys",
-      "term": "T3a",
-      "activity": "Indoor Team Sports",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "secondary-gym-2"
-    },
-    {
-      "cohort": "7 Boys",
-      "term": "T3b",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Miles Dibsdall"
-      ],
-      "facilityId": "secondary-gym-2"
-    },
-    {
-      "cohort": "8 Girls",
-      "term": "T1a",
-      "activity": "Swimming",
-      "teachers": [
-        "Aimee Langton",
-        "Charlotte Picknell"
-      ],
-      "facilityId": "main-pool"
-    },
-    {
-      "cohort": "8 Girls",
-      "term": "T1b",
-      "activity": "Game Changers",
-      "teachers": [
-        "Aimee Langton",
-        "Charlotte Picknell"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "8 Girls",
-      "term": "T2a",
-      "activity": "Parkour",
-      "teachers": [
-        "Aimee Langton",
-        "Charlotte Picknell"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "8 Girls",
-      "term": "T2b",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Aimee Langton",
-        "Charlotte Picknell"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "8 Girls",
-      "term": "T3a",
-      "activity": "Indoor Team Sports",
-      "teachers": [
-        "Aimee Langton",
-        "Charlotte Picknell"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "8 Girls",
-      "term": "T3b",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Aimee Langton",
-        "Charlotte Picknell"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "8 Boys",
-      "term": "T1a",
-      "activity": "Parkour",
-      "teachers": [
-        "Miles Dibsdall",
-        "Stephen Whitley"
-      ],
-      "facilityId": "secondary-gym-2"
-    },
-    {
-      "cohort": "8 Boys",
-      "term": "T1b",
-      "activity": "Game Changers",
-      "teachers": [
-        "Miles Dibsdall",
-        "Stephen Whitley"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "8 Boys",
-      "term": "T2a",
-      "activity": "Swimming",
-      "teachers": [
-        "Miles Dibsdall",
-        "Stephen Whitley"
-      ],
-      "facilityId": "main-pool"
-    },
-    {
-      "cohort": "8 Boys",
-      "term": "T2b",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Miles Dibsdall",
-        "Stephen Whitley"
-      ],
-      "facilityId": "back-pitch-1"
-    },
-    {
-      "cohort": "8 Boys",
-      "term": "T3a",
-      "activity": "Indoor Team Sports",
-      "teachers": [
-        "Miles Dibsdall",
-        "Stephen Whitley"
-      ],
-      "facilityId": "secondary-gym-2"
-    },
-    {
-      "cohort": "8 Boys",
-      "term": "T3b",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Miles Dibsdall",
-        "Stephen Whitley"
-      ],
-      "facilityId": "secondary-gym-2"
-    },
-    {
-      "cohort": "9 Girls",
-      "term": "T1a",
-      "activity": "Lifesaving",
-      "teachers": [
-        "Charlotte Picknell"
-      ],
-      "facilityId": "main-pool"
-    },
-    {
-      "cohort": "9 Girls",
-      "term": "T1b",
-      "activity": "Personal Exericse Plan",
-      "teachers": [
-        "Charlotte Picknell"
-      ],
-      "facilityId": "fitness-suite"
-    },
-    {
-      "cohort": "9 Girls",
-      "term": "T2a",
-      "activity": "Indoor Team Sports",
-      "teachers": [
-        "Charlotte Picknell"
-      ],
-      "facilityId": "secondary-gym-2"
-    },
-    {
-      "cohort": "9 Girls",
-      "term": "T2b",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Charlotte Picknell"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "9 Girls",
-      "term": "T3a",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Charlotte Picknell"
-      ],
-      "facilityId": "tennis-courts"
-    },
-    {
-      "cohort": "9 Girls",
-      "term": "T3b",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Charlotte Picknell"
-      ],
-      "facilityId": "fitness-suite"
-    },
-    {
-      "cohort": "9 Boys",
-      "term": "T1a",
-      "activity": "Personal Exercise Plan",
-      "teachers": [
-        "Stephen Whitley"
-      ],
-      "facilityId": "fitness-suite"
-    },
-    {
-      "cohort": "9 Boys",
-      "term": "T1b",
-      "activity": "Team Sports",
-      "teachers": [
-        "Stephen Whitley"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "9 Boys",
-      "term": "T2a",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Stephen Whitley"
-      ],
-      "facilityId": "back-pitch-1"
-    },
-    {
-      "cohort": "9 Boys",
-      "term": "T2b",
-      "activity": "Lifesaving",
-      "teachers": [
-        "Stephen Whitley"
-      ],
-      "facilityId": "main-pool"
-    },
-    {
-      "cohort": "9 Boys",
-      "term": "T3a",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Stephen Whitley"
-      ],
-      "facilityId": "tennis-courts"
-    },
-    {
-      "cohort": "9 Boys",
-      "term": "T3b",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Stephen Whitley"
-      ],
-      "facilityId": "c2-14"
-    },
-    {
-      "cohort": "10 Girls",
-      "term": "T1a",
-      "activity": "Water Games",
-      "teachers": [
-        "Charlotte Picknell",
-        "Aimee Langton"
-      ],
-      "facilityId": "main-pool"
-    },
-    {
-      "cohort": "10 Girls",
-      "term": "T1b",
-      "activity": "Netball",
-      "teachers": [
-        "Charlotte Picknell",
-        "Aimee Langton"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "10 Girls",
-      "term": "T2a",
-      "activity": "Indoor Sports",
-      "teachers": [
-        "Charlotte Picknell",
-        "Aimee Langton"
-      ],
-      "facilityId": "secondary-gym-1"
-    },
-    {
-      "cohort": "10 Girls",
-      "term": "T2b",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Charlotte Picknell",
-        "Aimee Langton"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "10 Girls",
-      "term": "T3a",
-      "activity": "Indoor Team Sports",
-      "teachers": [
-        "Charlotte Picknell",
-        "Aimee Langton"
-      ],
-      "facilityId": "fitness-suite"
-    },
-    {
-      "cohort": "10 Girls",
-      "term": "T3b",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Charlotte Picknell",
-        "Aimee Langton"
-      ],
-      "facilityId": "c2-14"
-    },
-    {
-      "cohort": "10 Boys",
-      "term": "T1a",
-      "activity": "Football/ Fitness?",
-      "teachers": [
-        "Stephen Whitley",
-        "Miles Dibsdall"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "10 Boys",
-      "term": "T1b",
-      "activity": "Rugby",
-      "teachers": [
-        "Stephen Whitley",
-        "Miles Dibsdall"
-      ],
-      "facilityId": "main-pitch-1"
-    },
-    {
-      "cohort": "10 Boys",
-      "term": "T2a",
-      "activity": "Outdoor Team Sports",
-      "teachers": [
-        "Stephen Whitley",
-        "Miles Dibsdall"
-      ],
-      "facilityId": "back-pitch-1"
-    },
-    {
-      "cohort": "10 Boys",
-      "term": "T2b",
-      "activity": "Water Games",
-      "teachers": [
-        "Stephen Whitley",
-        "Miles Dibsdall"
-      ],
-      "facilityId": "main-pool"
-    },
-    {
-      "cohort": "10 Boys",
-      "term": "T3a",
-      "activity": "Indoor Team Sports",
-      "teachers": [
-        "Stephen Whitley",
-        "Miles Dibsdall"
-      ],
-      "facilityId": "c2-14"
-    },
-    {
-      "cohort": "10 Boys",
-      "term": "T3b",
-      "activity": "Unit not specified",
-      "teachers": [
-        "Stephen Whitley",
-        "Miles Dibsdall"
-      ],
-      "facilityId": "fitness-suite"
+      "teachers": [],
+      "facilityId": "side-pool"
     }
   ],
   "periods": [
