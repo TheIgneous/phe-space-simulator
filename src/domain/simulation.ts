@@ -1,6 +1,6 @@
 import { FACILITY_BY_ID, displayCapacity, isFacilityUnavailable, relocationPoolFor } from "./facilities";
 import { SLOT_MINUTES } from "./generation-grid";
-import type { Facility, FacilityId, FacilityView, Issue, OccupancyEvent, Selection, SimulationDataset, TermId, WeekId } from "../types";
+import type { Facility, FacilityId, FacilityView, Issue, OccupancyEvent, PeriodDefinition, Selection, SimulationDataset, TermId, WeekId } from "../types";
 
 // Viewable school-day window. Starts at 07:30 so the MYP P1 (07:45) is fully visible; kept on a
 // 10-minute boundary so the generation grid stays aligned.
@@ -60,10 +60,36 @@ function relocationAnalysis(
   return { workable: totalDeficit > 0 && totalSpare >= totalDeficit, alternatives };
 }
 
+interface TimeWindow {
+  start: number;
+  end: number;
+}
+
+/** Break/lunch windows: lunch-flagged periods plus the gaps between consecutive same-phase periods. */
+function breakLunchWindows(periods: PeriodDefinition[]): TimeWindow[] {
+  const windows: TimeWindow[] = [];
+  for (const period of periods) {
+    if (period.lunch) windows.push({ start: period.start, end: period.end });
+  }
+  for (const source of ["PYP", "MYP"] as const) {
+    const sorted = periods.filter((period) => period.source === source).sort((left, right) => left.start - right.start);
+    for (let index = 0; index < sorted.length - 1; index += 1) {
+      const gapStart = sorted[index]!.end;
+      const gapEnd = sorted[index + 1]!.start;
+      if (gapEnd > gapStart) windows.push({ start: gapStart, end: gapEnd });
+    }
+  }
+  return windows;
+}
+
+const inBreakOrLunch = (windows: TimeWindow[], start: number, end: number): boolean =>
+  windows.some((window) => start < window.end && window.start < end);
+
 /**
  * Decide whether an over-capacity space is a workable (amber) or non-workable (red) clash.
- * A space with a `workableCapacity` (the Main Pool) absorbs that many groups as low risk; beyond
- * that — or for spaces without one (gym zones) — it falls back to confirmed relocation capacity.
+ * A space with a `workableCapacity` (Main Pool, pitches) absorbs that many groups as low risk —
+ * except a `workableCapacityClassTimeOnly` space (Main Pitches) is non-workable at break/lunch.
+ * Otherwise — or for spaces without a soft cap (gym zones) — it falls back to relocation capacity.
  */
 function assessOverCapacity(
   facility: Facility,
@@ -71,8 +97,12 @@ function assessOverCapacity(
   facilities: SimulationDataset["facilities"],
   activeEvents: OccupancyEvent[],
   term: TermId,
+  duringBreakOrLunch: boolean,
 ): { workable: boolean; detail: string } {
   if (facility.workableCapacity !== undefined && occupancy <= facility.workableCapacity) {
+    if (facility.workableCapacityClassTimeOnly && duringBreakOrLunch) {
+      return { workable: false, detail: `Non-workable — the ${facility.name} cannot take a second group during break or lunch.` };
+    }
     return { workable: true, detail: `Workable — the ${facility.name} can run ${facility.workableCapacity} groups at once.` };
   }
   const relocation = relocationAnalysis(facility.id, facilities, activeEvents, term);
@@ -90,8 +120,12 @@ export function getFacilityViews(dataset: SimulationDataset, selection: Selectio
     events.push(event);
     byFacility.set(event.facilityId, events);
   }
+  const duringBreakOrLunch = inBreakOrLunch(breakLunchWindows(dataset.periods), selection.time, selection.time + 1);
 
-  return dataset.facilities.map((facility) => {
+  return dataset.facilities.map((datasetFacility) => {
+    // Capacity/workability rules live in code, so prefer the canonical facility over the snapshot's
+    // serialized copy (which may predate a rule change like the pitch/pool soft capacities).
+    const facility = FACILITY_BY_ID.get(datasetFacility.id) ?? datasetFacility;
     const events = byFacility.get(facility.id) ?? [];
     if (isFacilityUnavailable(facility, selection.term)) {
       return {
@@ -102,7 +136,7 @@ export function getFacilityViews(dataset: SimulationDataset, selection: Selectio
       };
     }
     if (events.length > facility.capacity) {
-      const assessment = assessOverCapacity(facility, events.length, dataset.facilities, active, selection.term);
+      const assessment = assessOverCapacity(facility, events.length, dataset.facilities, active, selection.term, duringBreakOrLunch);
       return {
         facility,
         events,
@@ -127,6 +161,7 @@ function issueForInterval(
   end: number,
   facilities: SimulationDataset["facilities"],
   intervalEvents: OccupancyEvent[],
+  duringBreakOrLunch: boolean,
 ): Issue | null {
   const facility = FACILITY_BY_ID.get(facilityId);
   if (!facility || events.length === 0) return null;
@@ -151,7 +186,7 @@ function issueForInterval(
   }
 
   if (events.length > facility.capacity) {
-    const assessment = assessOverCapacity(facility, events.length, facilities, intervalEvents, term);
+    const assessment = assessOverCapacity(facility, events.length, facilities, intervalEvents, term, duringBreakOrLunch);
     return {
       id: `capacity-${suffix}`,
       severity: assessment.workable ? "workable" : "non-workable",
@@ -172,6 +207,7 @@ function issueForInterval(
 
 export function getTermIssues(dataset: SimulationDataset, term: TermId, week: WeekId): Issue[] {
   const relevant = dataset.events.filter((event) => event.term === term && event.weeks.includes(week));
+  const windows = breakLunchWindows(dataset.periods);
   const issues: Issue[] = [];
 
   for (let day = 0; day < 5; day += 1) {
@@ -184,11 +220,12 @@ export function getTermIssues(dataset: SimulationDataset, term: TermId, week: We
       const end = boundaries[index + 1]!;
       if (start === end) continue;
       const intervalEvents = dayEvents.filter((event) => event.start < end && start < event.end);
+      const duringBreakOrLunch = inBreakOrLunch(windows, start, end);
       for (const facility of dataset.facilities) {
         const active = intervalEvents.filter(
           (event) => event.facilityId === facility.id && event.start < end && start < event.end,
         );
-        const issue = issueForInterval(facility.id, active, term, week, day, start, end, dataset.facilities, intervalEvents);
+        const issue = issueForInterval(facility.id, active, term, week, day, start, end, dataset.facilities, intervalEvents, duringBreakOrLunch);
         if (issue) issues.push(issue);
       }
     }

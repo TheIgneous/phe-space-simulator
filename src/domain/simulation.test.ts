@@ -1,7 +1,7 @@
 import snapshot from "../data/snapshot.json";
 import { FACILITIES } from "./facilities";
 import { getFacilityViews, getStepTimes, getTermIssues } from "./simulation";
-import type { OccupancyEvent, SimulationDataset, TermId } from "../types";
+import type { OccupancyEvent, PeriodDefinition, SimulationDataset, TermId } from "../types";
 
 const dataset = snapshot as SimulationDataset;
 
@@ -153,6 +153,37 @@ describe("simulation regression model", () => {
       event({ id: "sp-2", facilityId: "side-pool", cohort: "EY1" }),
     ]);
     const issue = getTermIssues(poolDataset, "T3a", "A").find((item) => item.facilityId === "side-pool");
+    expect(issue?.severity).toBe("non-workable");
+  });
+
+  it("treats two classes on a Back Pitch as a workable clash", () => {
+    const pitchDataset = synthetic([
+      event({ id: "bp-1", facilityId: "back-pitch-1", cohort: "6 Boys" }),
+      event({ id: "bp-2", facilityId: "back-pitch-1", cohort: "8 Boys" }),
+    ]);
+    const issue = getTermIssues(pitchDataset, "T3a", "A").find((item) => item.facilityId === "back-pitch-1");
+    expect(issue?.severity).toBe("workable");
+  });
+
+  it("treats two classes on a Main Pitch during class time as workable", () => {
+    const pitchDataset = synthetic([
+      event({ id: "mp-1", facilityId: "main-pitch-1", cohort: "6 Girls" }),
+      event({ id: "mp-2", facilityId: "main-pitch-1", cohort: "8 Girls" }),
+    ]);
+    const issue = getTermIssues(pitchDataset, "T3a", "A").find((item) => item.facilityId === "main-pitch-1");
+    expect(issue?.severity).toBe("workable");
+  });
+
+  it("treats two classes on a Main Pitch during lunch as non-workable", () => {
+    const lunch: PeriodDefinition = { source: "PYP", period: 8, label: "Lunch", start: 13 * 60, end: 13 * 60 + 30, lunch: true };
+    const pitchDataset: SimulationDataset = {
+      ...synthetic([
+        event({ id: "mp-1", facilityId: "main-pitch-1", cohort: "6 Girls", start: 13 * 60, end: 13 * 60 + 30 }),
+        event({ id: "mp-2", facilityId: "main-pitch-1", cohort: "8 Girls", start: 13 * 60, end: 13 * 60 + 30 }),
+      ]),
+      periods: [lunch],
+    };
+    const issue = getTermIssues(pitchDataset, "T3a", "A").find((item) => item.facilityId === "main-pitch-1");
     expect(issue?.severity).toBe("non-workable");
   });
 

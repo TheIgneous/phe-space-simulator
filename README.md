@@ -122,6 +122,7 @@ The model distinguishes relationship rules that remain valid on a smaller time q
 - Generic `Swimming Pool` assignments send Minis/EY to the indoor Side Pool and Grade 1+ to the Main Pool.
 - Main and Side Pools are independent and may operate simultaneously.
 - The Main Pool can run **two** groups at once as a low-risk (workable, amber) clash; three or more is non-workable. The Side Pool stays single-group.
+- Back Pitches can run **two** groups at once as a workable (amber) clash. Main Pitches can too **except during break or lunch**, when a second group is non-workable (red).
 - Minis/EY1/EY2 may run PHE during the Grades 1–5 lunch (their day differs), so the lunch label never blocks their sessions.
 - The outdoor EY Pool is unavailable in T1a and T3b.
 - Tennis Courts are available throughout the school day and can host two groups concurrently.

@@ -40,6 +40,12 @@ export interface Facility {
    * Omit when over-capacity should rely on relocation (gym zones) or is never workable.
    */
   workableCapacity?: number;
+  /**
+   * When true, the `workableCapacity` overflow only applies during teaching time — a second group
+   * is a hard (red) clash during break or lunch. e.g. the Main Pitches can double up in lessons
+   * but not at break/lunch. Ignored without `workableCapacity`.
+   */
+  workableCapacityClassTimeOnly?: boolean;
   unavailableTerms?: TermId[];
   unavailableReason?: string;
 }

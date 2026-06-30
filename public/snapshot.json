@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generatedAt": "2026-06-30T10:39:53.009Z",
+    "generatedAt": "2026-06-30T11:01:16.839Z",
     "academicYear": "2026/27",
     "sources": [
       {
@@ -71,25 +71,31 @@
       "id": "main-pitch-1",
       "name": "Main Pitch 1",
       "group": "Outdoor",
-      "capacity": 1
+      "capacity": 1,
+      "workableCapacity": 2,
+      "workableCapacityClassTimeOnly": true
     },
     {
       "id": "main-pitch-2",
       "name": "Main Pitch 2",
       "group": "Outdoor",
-      "capacity": 1
+      "capacity": 1,
+      "workableCapacity": 2,
+      "workableCapacityClassTimeOnly": true
     },
     {
       "id": "back-pitch-1",
       "name": "Back Pitch 1",
       "group": "Outdoor",
-      "capacity": 1
+      "capacity": 1,
+      "workableCapacity": 2
     },
     {
       "id": "back-pitch-2",
       "name": "Back Pitch 2",
       "group": "Outdoor",
-      "capacity": 1
+      "capacity": 1,
+      "workableCapacity": 2
     },
     {
       "id": "tennis-courts",

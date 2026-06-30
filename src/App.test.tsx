@@ -57,7 +57,7 @@ describe("PHE Space Simulator", () => {
 
     expect(screen.getByLabelText("Term")).toHaveValue("T1a");
     expect(screen.getByText("2MZ (Boys) — Gymnastics")).toBeVisible();
-    expect(screen.getByLabelText("Main Pitch 1: 1 / 1")).toContainElement(screen.getByText("2MZ (Boys) — Gymnastics"));
+    expect(screen.getByLabelText("Main Pitch 1: 1 / 2")).toContainElement(screen.getByText("2MZ (Boys) — Gymnastics"));
   }, 15_000);
 
   it("swaps term blocks and uses preset staff objects", async () => {
