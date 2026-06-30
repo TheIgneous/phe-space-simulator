@@ -5,7 +5,7 @@ export const FACILITIES: Facility[] = [
   { id: "primary-gym-2", name: "Primary Gym 2", group: "Main Sports Hall", capacity: 1 },
   { id: "secondary-gym-1", name: "Secondary Gym 1", group: "Main Sports Hall", capacity: 1 },
   { id: "secondary-gym-2", name: "Secondary Gym 2", group: "Main Sports Hall", capacity: 1 },
-  { id: "main-pool", name: "Main Pool", group: "Pools", capacity: 1 },
+  { id: "main-pool", name: "Main Pool", group: "Pools", capacity: 1, workableCapacity: 2 },
   { id: "side-pool", name: "Side Pool", group: "Pools", capacity: 1 },
   {
     id: "ey-pool",
@@ -36,6 +36,11 @@ export const RELOCATION_POOLS: FacilityId[][] = [GYM_ZONE_IDS];
 
 export function relocationPoolFor(facilityId: FacilityId): FacilityId[] | null {
   return RELOCATION_POOLS.find((pool) => pool.includes(facilityId)) ?? null;
+}
+
+/** The occupancy figure shown as the denominator — the most groups a space can hold at once. */
+export function displayCapacity(facility: Facility): number {
+  return facility.workableCapacity ?? facility.capacity;
 }
 
 const compact = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");

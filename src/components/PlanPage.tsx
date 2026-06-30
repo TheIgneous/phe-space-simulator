@@ -1,5 +1,5 @@
-import { useState, type DragEvent } from "react";
-import { Check, GripVertical, RotateCcw } from "lucide-react";
+import { useState, type DragEvent, type FormEvent } from "react";
+import { Check, GripVertical, Plus, Printer, RotateCcw } from "lucide-react";
 import { TERMS, type Facility, type FacilityId, type PheAssignment, type StaffMember, type TermId } from "../types";
 
 interface PlanPageProps {
@@ -11,6 +11,7 @@ interface PlanPageProps {
   onFacilityChange: (cohort: string, term: TermId, facilityId: FacilityId) => void;
   onActivityChange: (cohort: string, term: TermId, activity: string) => void;
   onTeacherChange: (cohort: string, teachers: string[]) => void;
+  onCreateUnit: (unit: string) => void;
   onSwap: (cohort: string, from: TermId, to: TermId) => void;
   onApply: () => void;
   onDiscard: () => void;
@@ -79,12 +80,22 @@ export function PlanPage({
   onFacilityChange,
   onActivityChange,
   onTeacherChange,
+  onCreateUnit,
   onSwap,
   onApply,
   onDiscard,
 }: PlanPageProps) {
   const rows = planRows(assignments);
   const [swapSource, setSwapSource] = useState<BlockPosition | null>(null);
+  const [newUnit, setNewUnit] = useState("");
+
+  const submitNewUnit = (event: FormEvent) => {
+    event.preventDefault();
+    const title = newUnit.trim();
+    if (!title) return;
+    onCreateUnit(title);
+    setNewUnit("");
+  };
 
   const finishSwap = (target: BlockPosition) => {
     if (!swapSource) {
@@ -119,10 +130,25 @@ export function PlanPage({
         </div>
         <div className="plan-actions">
           <span className={isDirty ? "plan-dirty" : "plan-saved"}>{isDirty ? "Unsaved changes" : "Plan matches simulator"}</span>
-          <button type="button" className="button secondary plan-action-button" onClick={onDiscard} disabled={!isDirty}>
+          <form className="new-unit-form no-print" onSubmit={submitNewUnit}>
+            <input
+              type="text"
+              aria-label="New unit title"
+              placeholder="New unit title…"
+              value={newUnit}
+              onChange={(event) => setNewUnit(event.target.value)}
+            />
+            <button type="submit" className="button secondary plan-action-button" disabled={!newUnit.trim()}>
+              <Plus size={17} /> Add unit
+            </button>
+          </form>
+          <button type="button" className="button secondary plan-action-button no-print" onClick={() => window.print()}>
+            <Printer size={17} /> Export PDF
+          </button>
+          <button type="button" className="button secondary plan-action-button no-print" onClick={onDiscard} disabled={!isDirty}>
             <RotateCcw size={17} /> Discard
           </button>
-          <button type="button" className="button primary plan-action-button" onClick={onApply} disabled={!isDirty}>
+          <button type="button" className="button primary plan-action-button no-print" onClick={onApply} disabled={!isDirty}>
             <Check size={18} /> Test plan in simulator
           </button>
         </div>

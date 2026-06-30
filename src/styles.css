@@ -359,3 +359,94 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
   .button:hover { transform: none; }
 }
+
+/* Lunch period (PYP P8 for Grades 1–5) */
+.period-block-lunch { color: #8a6d00 !important; border-color: #f0d68a !important; background: repeating-linear-gradient(45deg, #fff8e3, #fff8e3 5px, #fdf0c4 5px, #fdf0c4 10px) !important; }
+
+/* New-unit form in the plan header */
+.new-unit-form { display: flex; align-items: center; gap: 6px; }
+.new-unit-form input { height: 42px; min-width: 160px; padding: 0 11px; border: 1px solid #bfc7d3; border-radius: 7px; background: #fff; font-size: 13px; }
+
+/* Shared report header / controls for Classes + Year overview */
+.class-page, .overview-page { min-height: calc(100vh - 96px); }
+.report-header { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 16px; }
+.report-header h1 { display: flex; align-items: center; gap: 9px; margin: 0; color: var(--navy); font-size: 28px; letter-spacing: -.025em; }
+.report-header p { margin: 7px 0 0; color: var(--muted); font-size: 14px; }
+.report-controls { display: flex; align-items: end; gap: 12px; }
+.report-controls label { display: grid; gap: 6px; }
+.report-controls label > span { font-size: 12px; font-weight: 700; color: var(--navy); }
+.report-controls select { height: 42px; min-width: 150px; padding: 0 11px; border: 1px solid #bfc7d3; border-radius: 7px; background: #fff; font-size: 14px; }
+.report-print { height: 42px; }
+.report-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-bottom: 14px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; background: var(--blue-soft); color: var(--navy); font-size: 14px; }
+.report-summary strong { font-size: 16px; }
+.report-summary span { color: #2b3f63; }
+.report-empty { padding: 24px; border: 1px dashed var(--border); border-radius: 8px; color: var(--muted); text-align: center; }
+
+/* Class timetable grid */
+.class-table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
+.class-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; font-size: 12px; }
+.class-table th, .class-table td { padding: 8px; border-right: 1px solid #e2e7ef; border-bottom: 1px solid #e2e7ef; text-align: left; vertical-align: top; }
+.class-table thead th { position: sticky; top: 0; z-index: 2; color: #fff; background: #086589; font-size: 13px; }
+.class-table th[scope="row"] { width: 120px; }
+.class-table th[scope="row"] strong { display: block; color: var(--navy); }
+.class-table th[scope="row"] small { color: var(--muted); font-size: 10px; }
+.class-session { display: grid; gap: 1px; padding: 6px 7px; border-radius: 6px; background: var(--blue-soft); }
+.class-session + .class-session { margin-top: 5px; }
+.class-session strong { color: var(--navy); font-size: 12px; }
+.class-session span { color: #0e57bd; font-size: 11px; }
+.class-session em { color: var(--violet); font-size: 10px; font-style: normal; font-weight: 700; }
+.class-session small { color: #5d6b82; font-size: 10px; }
+.class-row-lunch th[scope="row"] strong { color: #8a6d00; }
+.class-lunch-cell { background: repeating-linear-gradient(45deg, #fff8e3, #fff8e3 6px, #fdf0c4 6px, #fdf0c4 12px); }
+.class-lunch-tag { display: block; color: #8a6d00; font-weight: 700; font-size: 11px; text-align: center; }
+
+/* Year overview */
+.overview-totals { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+.overview-stat { display: flex; align-items: center; gap: 9px; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; color: var(--navy); background: #fff; }
+.overview-stat strong { font-size: 20px; }
+.overview-stat.ok { border-color: #b6e3c2; background: var(--green-soft); }
+.overview-stat.ok svg { color: var(--green); }
+.overview-stat.warning { border-color: #f3dca0; background: var(--amber-soft); }
+.overview-stat.warning svg { color: var(--amber); }
+.overview-stat.danger { border-color: #f3b1b1; background: var(--red-soft); }
+.overview-stat.danger svg { color: var(--red); }
+.overview-section-title { margin: 22px 0 10px; color: var(--navy); font-size: 18px; }
+.overview-table-wrap { overflow: auto; border: 1px solid var(--border); border-radius: 8px; background: #fff; }
+.overview-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; }
+.overview-table th, .overview-table td { padding: 8px 10px; border-right: 1px solid #e2e7ef; border-bottom: 1px solid #e2e7ef; text-align: left; vertical-align: top; }
+.overview-table thead th { position: sticky; top: 0; z-index: 2; color: #fff; background: #086589; }
+.overview-table th[scope="row"] { color: var(--navy); font-weight: 700; white-space: nowrap; }
+.overview-table td strong { display: block; color: var(--navy); font-size: 12px; }
+.overview-table td small { color: var(--muted); font-size: 10px; }
+.overview-table.compact td { font-weight: 700; }
+.overview-table .overview-danger { color: var(--red); }
+.overview-table .overview-warning { color: var(--amber); }
+.overview-missing { color: var(--muted); }
+.overview-clash-list { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.overview-clash-list li { display: grid; grid-template-columns: 200px 160px 1fr; gap: 12px; align-items: baseline; padding: 9px 12px; border: 1px solid #f0c9c9; border-radius: 7px; background: var(--red-soft); font-size: 12px; }
+.overview-clash-when { color: var(--muted); }
+.overview-clash-list strong { color: var(--violet); }
+.overview-clash-detail { color: var(--navy); }
+
+@media (max-width: 760px) {
+  .report-header { display: grid; align-items: stretch; }
+  .report-controls { flex-wrap: wrap; }
+  .overview-clash-list li { grid-template-columns: 1fr; gap: 3px; }
+}
+
+/* Print / Save-as-PDF layout for plan, class timetable and year overview */
+@media print {
+  @page { margin: 12mm; }
+  html, body { background: #fff; }
+  .app-frame { width: 100%; max-width: none; min-height: 0; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none; }
+  .no-print { display: none !important; }
+  .plan-page, .class-page, .overview-page { min-height: 0; }
+  .plan-header, .report-header { margin-bottom: 10px; }
+  .plan-table-wrap, .class-table-wrap, .overview-table-wrap { max-height: none; overflow: visible; border: 1px solid #ccc; }
+  .plan-table { min-width: 0; }
+  .plan-table th, .plan-table td, .plan-table thead th,
+  .class-table thead th, .overview-table thead th { position: static; }
+  .plan-table select { border: 0; background: transparent; -webkit-appearance: none; appearance: none; }
+  tr, td, th, li, .class-session { break-inside: avoid; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

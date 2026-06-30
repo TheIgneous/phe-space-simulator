@@ -1,14 +1,23 @@
-import { FACILITY_BY_ID, isFacilityUnavailable, relocationPoolFor } from "./facilities";
+import { FACILITY_BY_ID, displayCapacity, isFacilityUnavailable, relocationPoolFor } from "./facilities";
 import { SLOT_MINUTES } from "./generation-grid";
-import type { FacilityId, FacilityView, Issue, OccupancyEvent, Selection, SimulationDataset, TermId, WeekId } from "../types";
+import type { Facility, FacilityId, FacilityView, Issue, OccupancyEvent, Selection, SimulationDataset, TermId, WeekId } from "../types";
 
-export const DAY_START = 8 * 60;
+// Viewable school-day window. Starts at 07:30 so the MYP P1 (07:45) is fully visible; kept on a
+// 10-minute boundary so the generation grid stays aligned.
+export const DAY_START = 7 * 60 + 30;
 export const DAY_END = 15 * 60;
 
 export function formatTime(totalMinutes: number): string {
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+}
+
+/** Whole-hour tick marks within the viewable day (e.g. 08:00 … 15:00), used by the timeline rulers. */
+export function hourMarks(): number[] {
+  const marks: number[] = [];
+  for (let time = Math.ceil(DAY_START / 60) * 60; time <= DAY_END; time += 60) marks.push(time);
+  return marks;
 }
 
 export function isEventActive(event: OccupancyEvent, selection: Selection): boolean {
@@ -51,6 +60,28 @@ function relocationAnalysis(
   return { workable: totalDeficit > 0 && totalSpare >= totalDeficit, alternatives };
 }
 
+/**
+ * Decide whether an over-capacity space is a workable (amber) or non-workable (red) clash.
+ * A space with a `workableCapacity` (the Main Pool) absorbs that many groups as low risk; beyond
+ * that — or for spaces without one (gym zones) — it falls back to confirmed relocation capacity.
+ */
+function assessOverCapacity(
+  facility: Facility,
+  occupancy: number,
+  facilities: SimulationDataset["facilities"],
+  activeEvents: OccupancyEvent[],
+  term: TermId,
+): { workable: boolean; detail: string } {
+  if (facility.workableCapacity !== undefined && occupancy <= facility.workableCapacity) {
+    return { workable: true, detail: `Workable — the ${facility.name} can run ${facility.workableCapacity} groups at once.` };
+  }
+  const relocation = relocationAnalysis(facility.id, facilities, activeEvents, term);
+  const overflow = occupancy - facility.capacity;
+  return relocation.workable
+    ? { workable: true, detail: `Workable — move ${overflow} group${overflow === 1 ? "" : "s"} to ${relocation.alternatives.join(" or ")}.` }
+    : { workable: false, detail: `Non-workable — ${occupancy} / ${facility.capacity} occupancy and no confirmed suitable alternative is available.` };
+}
+
 export function getFacilityViews(dataset: SimulationDataset, selection: Selection): FacilityView[] {
   const active = eventsForSelection(dataset, selection);
   const byFacility = new Map<FacilityId, OccupancyEvent[]>();
@@ -71,16 +102,16 @@ export function getFacilityViews(dataset: SimulationDataset, selection: Selectio
       };
     }
     if (events.length > facility.capacity) {
-      const relocation = relocationAnalysis(facility.id, dataset.facilities, active, selection.term);
+      const assessment = assessOverCapacity(facility, events.length, dataset.facilities, active, selection.term);
       return {
         facility,
         events,
-        status: relocation.workable ? "conditional" : "conflict",
-        label: `${events.length} / ${facility.capacity}`,
+        status: assessment.workable ? "conditional" : "conflict",
+        label: `${events.length} / ${displayCapacity(facility)}`,
       };
     }
     if (events.length > 0) {
-      return { facility, events, status: "occupied", label: `${events.length} / ${facility.capacity}` };
+      return { facility, events, status: "occupied", label: `${events.length} / ${displayCapacity(facility)}` };
     }
     return { facility, events, status: "available", label: "Available" };
   });
@@ -120,11 +151,10 @@ function issueForInterval(
   }
 
   if (events.length > facility.capacity) {
-    const relocation = relocationAnalysis(facilityId, facilities, intervalEvents, term);
-    const overflow = events.length - facility.capacity;
+    const assessment = assessOverCapacity(facility, events.length, facilities, intervalEvents, term);
     return {
       id: `capacity-${suffix}`,
-      severity: relocation.workable ? "workable" : "non-workable",
+      severity: assessment.workable ? "workable" : "non-workable",
       type: "capacity",
       facilityId,
       term,
@@ -133,9 +163,7 @@ function issueForInterval(
       start,
       end,
       title: facility.name,
-      detail: relocation.workable
-        ? `Workable — move ${overflow} group${overflow === 1 ? "" : "s"} to ${relocation.alternatives.join(" or ")}.`
-        : `Non-workable — ${events.length} / ${facility.capacity} occupancy and no confirmed suitable alternative is available.`,
+      detail: assessment.detail,
       eventIds: sortedIds,
     };
   }

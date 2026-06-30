@@ -34,6 +34,12 @@ export interface Facility {
   name: string;
   group: FacilityGroup;
   capacity: number;
+  /**
+   * Occupancy this space can still absorb as a low-risk (workable, amber) clash rather than a
+   * non-workable (red) one. e.g. the Main Pool ideally runs one group but can take two at once.
+   * Omit when over-capacity should rely on relocation (gym zones) or is never workable.
+   */
+  workableCapacity?: number;
   unavailableTerms?: TermId[];
   unavailableReason?: string;
 }
@@ -44,6 +50,8 @@ export interface PeriodDefinition {
   label: string;
   start: number;
   end: number;
+  /** True when this period is a lunch break (e.g. PYP P8 for Grades 1–5). */
+  lunch?: boolean;
 }
 
 export interface OccupancyEvent {

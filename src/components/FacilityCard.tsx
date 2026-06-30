@@ -1,4 +1,5 @@
 import { AlertTriangle, Check, Clock3, UserRound } from "lucide-react";
+import { displayCapacity } from "../domain/facilities";
 import { formatTime } from "../domain/simulation";
 import type { FacilityView, OccupancyEvent } from "../types";
 
@@ -18,7 +19,7 @@ export function FacilityCard({ view }: FacilityCardProps) {
     <article className={`facility-card status-${status}`} aria-label={`${facility.name}: ${label}`}>
       <div className="facility-heading">
         <h3>{facility.name}</h3>
-        {events.length > 0 ? <strong>{events.length} / {facility.capacity}</strong> : null}
+        {events.length > 0 ? <strong>{events.length} / {displayCapacity(facility)}</strong> : null}
       </div>
       {events.length === 0 ? (
         <div className="empty-facility">

@@ -1,5 +1,5 @@
 import { UserRound } from "lucide-react";
-import { DAY_END, DAY_START, formatTime } from "../domain/simulation";
+import { DAY_END, DAY_START, formatTime, hourMarks } from "../domain/simulation";
 import type { DayName, PeriodDefinition } from "../types";
 
 interface DayTimelineProps {
@@ -15,7 +15,7 @@ function PeriodRow({ source, periods }: { source: "PYP" | "MYP"; periods: Period
       <div className="period-track">
         {periods.filter((period) => period.source === source).map((period) => (
           <div
-            className="period-block"
+            className={`period-block${period.lunch ? " period-block-lunch" : ""}`}
             key={`${source}-${period.period}`}
             style={{
               left: `${((period.start - DAY_START) / (DAY_END - DAY_START)) * 100}%`,
@@ -38,7 +38,7 @@ export function DayTimeline({ day, periods, currentTime }: DayTimelineProps) {
     <section className="day-timeline">
       <h2>{day} timeline <small>10-minute generation grid</small></h2>
       <div className="timeline-hours" aria-hidden="true">
-        {Array.from({ length: 8 }, (_, index) => DAY_START + index * 60).map((time) => (
+        {hourMarks().map((time) => (
           <span key={time} style={{ left: `${((time - DAY_START) / (DAY_END - DAY_START)) * 100}%` }}>{formatTime(time)}</span>
         ))}
       </div>

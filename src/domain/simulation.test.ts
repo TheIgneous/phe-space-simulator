@@ -124,6 +124,38 @@ describe("simulation regression model", () => {
     expect(getTermIssues(poolDataset, "T3a", "A")).toHaveLength(0);
   });
 
+  it("treats two classes in the Main Pool as a workable (low-risk) clash, not a hard clash", () => {
+    const poolDataset = synthetic([
+      event({ id: "mp-1", facilityId: "main-pool", cohort: "6 Boys" }),
+      event({ id: "mp-2", facilityId: "main-pool", cohort: "8 Boys" }),
+    ]);
+    const selection = { term: "T3a", week: "A", day: 3, time: 13 * 60 } as const;
+    const view = getFacilityViews(poolDataset, selection).find((item) => item.facility.id === "main-pool");
+    const issue = getTermIssues(poolDataset, "T3a", "A").find((item) => item.facilityId === "main-pool");
+    expect(view?.status).toBe("conditional");
+    expect(view?.label).toBe("2 / 2");
+    expect(issue?.severity).toBe("workable");
+  });
+
+  it("treats three classes in the Main Pool as a non-workable clash", () => {
+    const poolDataset = synthetic([
+      event({ id: "mp-1", facilityId: "main-pool", cohort: "6 Boys" }),
+      event({ id: "mp-2", facilityId: "main-pool", cohort: "8 Boys" }),
+      event({ id: "mp-3", facilityId: "main-pool", cohort: "7 Boys" }),
+    ]);
+    const issue = getTermIssues(poolDataset, "T3a", "A").find((item) => item.facilityId === "main-pool");
+    expect(issue?.severity).toBe("non-workable");
+  });
+
+  it("keeps two classes in the Side Pool a non-workable clash", () => {
+    const poolDataset = synthetic([
+      event({ id: "sp-1", facilityId: "side-pool", cohort: "Minis" }),
+      event({ id: "sp-2", facilityId: "side-pool", cohort: "EY1" }),
+    ]);
+    const issue = getTermIssues(poolDataset, "T3a", "A").find((item) => item.facilityId === "side-pool");
+    expect(issue?.severity).toBe("non-workable");
+  });
+
   it("marks the outdoor EY Pool unavailable in hot half-terms", () => {
     const view = getFacilityViews(synthetic([]), { term: "T3b", week: "A", day: 0, time: 8 * 60 })
       .find((item) => item.facility.id === "ey-pool");

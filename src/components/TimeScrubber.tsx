@@ -1,4 +1,4 @@
-import { DAY_END, DAY_START, formatTime } from "../domain/simulation";
+import { DAY_END, DAY_START, formatTime, hourMarks } from "../domain/simulation";
 import { SLOT_MINUTES } from "../domain/generation-grid";
 
 interface TimeScrubberProps {
@@ -6,7 +6,7 @@ interface TimeScrubberProps {
   onChange: (value: number) => void;
 }
 
-const HOUR_MARKS = Array.from({ length: 8 }, (_, index) => DAY_START + index * 60);
+const HOUR_MARKS = hourMarks();
 
 export function TimeScrubber({ value, onChange }: TimeScrubberProps) {
   const percent = ((value - DAY_START) / (DAY_END - DAY_START)) * 100;

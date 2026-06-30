@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { XMLParser } from "fast-xml-parser";
+import { dedupeEvents } from "./events";
 import { normalizeXmlFacility } from "./facilities";
 import {
   TERMS,
@@ -17,10 +18,23 @@ import {
 
 type SourceName = "primary" | "secondary";
 
+/**
+ * Subjects that represent timetabled PHE for each phase. The Primary export carries
+ * Early-Years and Minis PHE under the dedicated "EY PE"/"EY2PE" subjects rather than
+ * "PHE PYP"; treating them as PHE keeps Minis/EY1/EY2 on their pool/gym allocations
+ * instead of leaking into the EY Gym as "existing bookings".
+ */
+const PRIMARY_PHE_SUBJECTS = new Set(["PHE PYP", "EY PE", "EY2PE"]);
+const SECONDARY_PHE_SUBJECTS = new Set(["PHE Girls", "PHE Boys"]);
+
+const isPheSubject = (source: SourceName, subject: string): boolean =>
+  (source === "primary" ? PRIMARY_PHE_SUBJECTS : SECONDARY_PHE_SUBJECTS).has(subject);
+
 interface XmlContext {
   root: any;
   source: SourceName;
   periods: Map<string, { start: number; end: number; name: string }>;
+  lunchPeriods: Set<string>;
   subjects: Map<string, any>;
   teachers: Map<string, any>;
   classrooms: Map<string, any>;
@@ -94,17 +108,32 @@ function parseXml(text: string, source: SourceName): XmlContext {
     cardsByLesson.set(key, [...(cardsByLesson.get(key) ?? []), card]);
   }
 
+  const subjects = mapById(root.subjects, "subject");
   return {
     root,
     source,
     periods,
-    subjects: mapById(root.subjects, "subject"),
+    lunchPeriods: lunchPeriodIds(root, subjects, cardsByLesson),
+    subjects,
     teachers: mapById(root.teachers, "teacher"),
     classrooms: mapById(root.classrooms, "classroom"),
     classes: mapById(root.classes, "class"),
     groups: mapById(root.groups, "group"),
     cardsByLesson,
   };
+}
+
+/** Period ids that host a lunch subject (e.g. "Lunch PYP" at P8 for Grades 1–5). */
+function lunchPeriodIds(root: any, subjects: Map<string, any>, cardsByLesson: Map<string, any[]>): Set<string> {
+  const lunchSubjectIds = new Set(
+    [...subjects.entries()].filter(([, subject]) => /lunch/i.test(String(subject?.name ?? ""))).map(([id]) => id),
+  );
+  const periods = new Set<string>();
+  for (const lesson of arrayify<any>(root.lessons?.lesson)) {
+    if (!lunchSubjectIds.has(String(lesson.subjectid))) continue;
+    for (const card of cardsByLesson.get(String(lesson.id)) ?? []) periods.add(String(card.period));
+  }
+  return periods;
 }
 
 const namesFor = (map: Map<string, any>, ids: unknown): string[] => splitIds(ids).map((id) => String(map.get(id)?.name ?? id));
@@ -114,7 +143,7 @@ function pheStaff(contexts: XmlContext[]): StaffMember[] {
   for (const context of contexts) {
     for (const lesson of arrayify<any>(context.root.lessons?.lesson)) {
       const subject = String(context.subjects.get(String(lesson.subjectid))?.name ?? "");
-      if (subject !== "PHE PYP" && subject !== "PHE Girls" && subject !== "PHE Boys") continue;
+      if (!isPheSubject(context.source, subject)) continue;
       for (const id of splitIds(lesson.teacherids)) {
         const name = String(context.teachers.get(id)?.name ?? "").trim();
         if (name) staff.set(name, { id, name });
@@ -148,13 +177,17 @@ function secondaryCohort(subject: string, classes: string[]): string | null {
 }
 
 function timetablePeriods(context: XmlContext): PeriodDefinition[] {
-  return [...context.periods.entries()].map(([period, definition]) => ({
-    source: context.source === "primary" ? "PYP" : "MYP",
-    period: Number(period),
-    label: `P${definition.name}`,
-    start: definition.start,
-    end: definition.end,
-  }));
+  return [...context.periods.entries()].map(([period, definition]) => {
+    const lunch = context.lunchPeriods.has(period);
+    return {
+      source: context.source === "primary" ? "PYP" : "MYP",
+      period: Number(period),
+      label: lunch ? "Lunch" : `P${definition.name}`,
+      start: definition.start,
+      end: definition.end,
+      ...(lunch ? { lunch: true } : {}),
+    };
+  });
 }
 
 function addPheEvents(
@@ -166,8 +199,7 @@ function addPheEvents(
   let added = 0;
   for (const lesson of arrayify<any>(context.root.lessons?.lesson)) {
     const subject = String(context.subjects.get(String(lesson.subjectid))?.name ?? "");
-    const valid = context.source === "primary" ? subject === "PHE PYP" : subject === "PHE Girls" || subject === "PHE Boys";
-    if (!valid) continue;
+    if (!isPheSubject(context.source, subject)) continue;
     const classes = namesFor(context.classes, lesson.classids);
     const groups = namesFor(context.groups, lesson.groupids);
     const cohorts = context.source === "primary"
@@ -223,7 +255,7 @@ const isPrimaryClass = (name: string): boolean => /^Mini\b|^EY[12]|^[1-5][A-Z]/i
 function addExistingBookings(context: XmlContext, events: OccupancyEvent[]): void {
   for (const lesson of arrayify<any>(context.root.lessons?.lesson)) {
     const subject = String(context.subjects.get(String(lesson.subjectid))?.name ?? "Unspecified booking");
-    if (subject === "PHE PYP" || subject === "PHE Girls" || subject === "PHE Boys") continue;
+    if (isPheSubject(context.source, subject)) continue;
     const classes = namesFor(context.classes, lesson.classids);
     if (context.source === "primary" && (classes.length === 0 || !classes.every(isPrimaryClass))) continue;
     const fallbackRoomIds = splitIds(lesson.classroomids);
@@ -263,6 +295,8 @@ function addExistingBookings(context: XmlContext, events: OccupancyEvent[]): voi
   }
 }
 
+export { dedupeEvents };
+
 export function regenerateFromTimetables(
   current: SimulationDataset,
   primaryUpload: TimetableUpload,
@@ -294,7 +328,7 @@ export function regenerateFromTimetables(
     },
     periods: [...timetablePeriods(primary), ...timetablePeriods(secondary)],
     staff: pheStaff([primary, secondary]),
-    events: events.sort((left, right) => left.term.localeCompare(right.term) || left.day - right.day || left.start - right.start),
+    events: dedupeEvents(events).sort((left, right) => left.term.localeCompare(right.term) || left.day - right.day || left.start - right.start),
     warnings,
   };
 }
