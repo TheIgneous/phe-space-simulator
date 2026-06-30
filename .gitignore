@@ -10,3 +10,7 @@ test-results/
 *.local.xlsx
 .env
 .env.*
+
+# Shared timetable hub: these dummy-data exports are intentionally tracked so both
+# apps read the same source (raw *.xml elsewhere stays ignored above).
+!data/*.xml
