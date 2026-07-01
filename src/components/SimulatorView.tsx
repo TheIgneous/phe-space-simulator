@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { AlertTriangle, CheckCircle2, Info, Pause, Play, RotateCcw, SkipBack, SkipForward } from "lucide-react";
+import { AlertTriangle, CheckCircle2, GanttChartSquare, Info, LayoutGrid, Pause, Play, RotateCcw, SkipBack, SkipForward } from "lucide-react";
 import { FacilityTimeline } from "./FacilityTimeline";
+import { FacilityBoard } from "./FacilityBoard";
 import { TimetableImport } from "./TimetableImport";
 import { FACILITY_BY_ID } from "../domain/facilities";
 import { formatTime } from "../domain/simulation";
@@ -41,6 +42,7 @@ export function SimulatorView({
 }: SimulatorViewProps) {
   const [showWarnings, setShowWarnings] = useState(false);
   const [openClashes, setOpenClashes] = useState<ClashSeverity | null>(null);
+  const [boardView, setBoardView] = useState<"timeline" | "spaces">("timeline");
 
   // Close the clash-details popover on outside-click or Escape (state lives here, not in the effect body).
   useEffect(() => {
@@ -110,6 +112,14 @@ export function SimulatorView({
           <div className="sv-brand">
             <div className="sv-brand-name">PHE Space Simulator</div>
             <div className="sv-brand-sub">AY {dataset.metadata.academicYear} · space validation</div>
+          </div>
+          <div className="sv-viewswitch" role="group" aria-label="Simulator view">
+            <button type="button" className={boardView === "timeline" ? "active" : ""} aria-pressed={boardView === "timeline"} onClick={() => setBoardView("timeline")}>
+              <GanttChartSquare size={15} /> Timeline
+            </button>
+            <button type="button" className={boardView === "spaces" ? "active" : ""} aria-pressed={boardView === "spaces"} onClick={() => setBoardView("spaces")}>
+              <LayoutGrid size={15} /> Spaces
+            </button>
           </div>
           <div className="sv-move">
             <div className="sv-now">
@@ -208,7 +218,9 @@ export function SimulatorView({
             </div>
           </div>
 
-          <FacilityTimeline dataset={dataset} selection={selection} termIssues={termIssues} onScrub={onScrub} />
+          {boardView === "spaces"
+            ? <FacilityBoard dataset={dataset} selection={selection} onScrub={onScrub} />
+            : <FacilityTimeline dataset={dataset} selection={selection} termIssues={termIssues} onScrub={onScrub} />}
         </div>
 
         {/* footer */}

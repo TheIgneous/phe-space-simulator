@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-import { CalendarRange, Printer } from "lucide-react";
+import { CalendarRange, Layers, Printer } from "lucide-react";
 import { FACILITY_BY_ID, isEarlyYearsCohort } from "../domain/facilities";
 import { formatTime } from "../domain/simulation";
-import { DAYS, TERMS, type OccupancyEvent, type PeriodDefinition, type SimulationDataset, type TermId } from "../types";
+import { DAYS, TERMS, type OccupancyEvent, type PeriodDefinition, type PheAssignment, type SimulationDataset, type TermId } from "../types";
+import { ClassOverlay } from "./ClassOverlay";
 
 interface ClassTimetablePageProps {
   dataset: SimulationDataset;
@@ -60,6 +61,11 @@ export function ClassTimetablePage({ dataset }: ClassTimetablePageProps) {
   );
   const [cohort, setCohort] = useState(cohorts[0] ?? "");
   const [term, setTerm] = useState<TermId>("T1a");
+  const [mode, setMode] = useState<"single" | "overlay">("single");
+  const [overlaid, setOverlaid] = useState<string[]>(() => cohorts.slice(0, 2));
+
+  const toggleOverlaid = (name: string) =>
+    setOverlaid((current) => (current.includes(name) ? current.filter((item) => item !== name) : [...current, name]));
 
   const cohortEvents = useMemo(
     () => dataset.events.filter((event) => event.kind === "PHE" && event.cohort === cohort),
@@ -84,15 +90,27 @@ export function ClassTimetablePage({ dataset }: ClassTimetablePageProps) {
       <header className="report-header">
         <div>
           <h1 id="class-title"><CalendarRange size={24} aria-hidden="true" /> Class timetable</h1>
-          <p>Weekly PHE schedule for a group. Choose a class and term, then export to PDF.</p>
+          <p>{mode === "single"
+            ? "Weekly PHE schedule for a group. Choose a class and term, then export to PDF."
+            : "Overlay several classes on a shared clock-time axis to spot where their PHE sessions coincide."}</p>
         </div>
         <div className="report-controls no-print">
-          <label>
-            <span>Class</span>
-            <select aria-label="Class" value={cohort} onChange={(event) => setCohort(event.target.value)}>
-              {cohorts.map((name) => <option key={name} value={name}>{name}</option>)}
-            </select>
-          </label>
+          <div className="class-mode" role="group" aria-label="View mode">
+            <button type="button" className={mode === "single" ? "active" : ""} aria-pressed={mode === "single"} onClick={() => setMode("single")}>
+              <CalendarRange size={15} /> Single
+            </button>
+            <button type="button" className={mode === "overlay" ? "active" : ""} aria-pressed={mode === "overlay"} onClick={() => setMode("overlay")}>
+              <Layers size={15} /> Overlay
+            </button>
+          </div>
+          {mode === "single" ? (
+            <label>
+              <span>Class</span>
+              <select aria-label="Class" value={cohort} onChange={(event) => setCohort(event.target.value)}>
+                {cohorts.map((name) => <option key={name} value={name}>{name}</option>)}
+              </select>
+            </label>
+          ) : null}
           <label>
             <span>Term</span>
             <select aria-label="Term" value={term} onChange={(event) => setTerm(event.target.value as TermId)}>
@@ -105,6 +123,44 @@ export function ClassTimetablePage({ dataset }: ClassTimetablePageProps) {
         </div>
       </header>
 
+      {mode === "overlay" ? (
+        <fieldset className="class-picker no-print">
+          <legend>Classes to overlay</legend>
+          {cohorts.map((name) => (
+            <label key={name} className={overlaid.includes(name) ? "is-on" : ""}>
+              <input type="checkbox" checked={overlaid.includes(name)} onChange={() => toggleOverlaid(name)} />
+              <span>{name}</span>
+            </label>
+          ))}
+        </fieldset>
+      ) : null}
+
+      {mode === "overlay" ? (
+        <ClassOverlay dataset={dataset} term={term} selected={overlaid} />
+      ) : (
+        <SingleClass
+          cohort={cohort}
+          term={term}
+          assignment={assignment}
+          slots={slots}
+          cellEvents={cellEvents}
+        />
+      )}
+    </section>
+  );
+}
+
+interface SingleClassProps {
+  cohort: string;
+  term: TermId;
+  assignment: PheAssignment | undefined;
+  slots: Slot[];
+  cellEvents: (slot: Slot, day: number) => OccupancyEvent[];
+}
+
+function SingleClass({ cohort, term, assignment, slots, cellEvents }: SingleClassProps) {
+  return (
+    <>
       <div className="report-summary">
         <strong>{cohort || "—"}</strong>
         <span>{term}</span>
@@ -153,6 +209,6 @@ export function ClassTimetablePage({ dataset }: ClassTimetablePageProps) {
           </table>
         </div>
       )}
-    </section>
+    </>
   );
 }
