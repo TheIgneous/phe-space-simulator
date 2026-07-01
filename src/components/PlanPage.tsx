@@ -1,5 +1,6 @@
 import { useState, type DragEvent, type FormEvent } from "react";
-import { Check, GripVertical, Plus, Printer, RotateCcw } from "lucide-react";
+import { Check, FileDown, GripVertical, Plus, Printer, RotateCcw } from "lucide-react";
+import { assignmentsToCsv } from "../domain/allocationCsv";
 import { TERMS, type Facility, type FacilityId, type PheAssignment, type StaffMember, type TermId } from "../types";
 
 interface PlanPageProps {
@@ -97,6 +98,15 @@ export function PlanPage({
     setNewUnit("");
   };
 
+  const exportCsv = () => {
+    const url = URL.createObjectURL(new Blob([assignmentsToCsv(assignments)], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "allocations.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   const finishSwap = (target: BlockPosition) => {
     if (!swapSource) {
       setSwapSource(target);
@@ -142,6 +152,9 @@ export function PlanPage({
               <Plus size={17} /> Add unit
             </button>
           </form>
+          <button type="button" className="button secondary plan-action-button no-print" onClick={exportCsv} title="Download the current plan as allocations.csv for data/">
+            <FileDown size={17} /> Export CSV
+          </button>
           <button type="button" className="button secondary plan-action-button no-print" onClick={() => window.print()}>
             <Printer size={17} /> Export PDF
           </button>

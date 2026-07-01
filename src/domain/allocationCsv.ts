@@ -40,9 +40,10 @@ function parseCsv(text: string): string[][] {
 const csvCell = (value: string): string => `"${value.replaceAll('"', '""')}"`;
 const assignmentKey = (cohort: string, term: TermId): string => `${cohort}|${term}`;
 
-export function allocationTemplateCsv(dataset: SimulationDataset): string {
-  const byKey = new Map(dataset.assignments.map((assignment) => [assignmentKey(assignment.cohort, assignment.term), assignment]));
-  const cohorts = [...new Set(dataset.assignments.map((assignment) => assignment.cohort))].sort((left, right) => left.localeCompare(right, undefined, { numeric: true }));
+/** Serialize a plan (one row per cohort × term) to the ingest CSV format. */
+export function assignmentsToCsv(assignments: PheAssignment[]): string {
+  const byKey = new Map(assignments.map((assignment) => [assignmentKey(assignment.cohort, assignment.term), assignment]));
+  const cohorts = [...new Set(assignments.map((assignment) => assignment.cohort))].sort((left, right) => left.localeCompare(right, undefined, { numeric: true }));
   const rows = ["cohort,term,activity,facility,teachers"];
   for (const cohort of cohorts) {
     for (const term of TERMS) {
@@ -58,6 +59,10 @@ export function allocationTemplateCsv(dataset: SimulationDataset): string {
     }
   }
   return `${rows.join("\r\n")}\r\n`;
+}
+
+export function allocationTemplateCsv(dataset: SimulationDataset): string {
+  return assignmentsToCsv(dataset.assignments);
 }
 
 export function applyAllocationCsv(
