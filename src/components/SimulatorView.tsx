@@ -1,9 +1,12 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { AlertTriangle, CheckCircle2, Info, Pause, Play, RotateCcw, SkipBack, SkipForward } from "lucide-react";
 import { FacilityTimeline } from "./FacilityTimeline";
 import { TimetableImport } from "./TimetableImport";
+import { FACILITY_BY_ID } from "../domain/facilities";
 import { formatTime } from "../domain/simulation";
 import { DAYS, TERMS, WEEKS, type DayIndex, type Issue, type Selection, type SimulationDataset, type TermId, type WeekId } from "../types";
+
+type ClashSeverity = "workable" | "non-workable";
 
 interface SimulatorViewProps {
   dataset: SimulationDataset;
@@ -37,6 +40,23 @@ export function SimulatorView({
   onImport,
 }: SimulatorViewProps) {
   const [showWarnings, setShowWarnings] = useState(false);
+  const [openClashes, setOpenClashes] = useState<ClashSeverity | null>(null);
+
+  // Close the clash-details popover on outside-click or Escape (state lives here, not in the effect body).
+  useEffect(() => {
+    if (!openClashes) return;
+    const onDown = (event: globalThis.MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".sv-clash-pop") && !target.closest(".sv-count")) setOpenClashes(null);
+    };
+    const onKey = (event: globalThis.KeyboardEvent) => { if (event.key === "Escape") setOpenClashes(null); };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [openClashes]);
 
   const occupiedNow = useMemo(() => {
     const facilities = new Set<string>();
@@ -56,9 +76,31 @@ export function SimulatorView({
 
   const totalSpaces = dataset.facilities.length;
   const freeNow = totalSpaces - occupiedNow;
-  const workable = termIssues.filter((issue) => issue.severity === "workable").length;
-  const nonWorkable = termIssues.filter((issue) => issue.severity === "non-workable").length;
   const clashesNow = currentIssues.length;
+
+  // Clash issues for this term, split by severity and sorted for the details popover.
+  const clashesBySeverity = useMemo(() => {
+    const eventById = new Map(dataset.events.map((event) => [event.id, event]));
+    const byDayTime = (left: Issue, right: Issue) =>
+      (left.day ?? 0) - (right.day ?? 0) || (left.start ?? 0) - (right.start ?? 0);
+    const build = (severity: ClashSeverity) =>
+      termIssues
+        .filter((issue) => issue.severity === severity)
+        .sort(byDayTime)
+        .map((issue) => ({
+          id: issue.id,
+          when: `${issue.day !== undefined ? DAYS[issue.day] : ""} ${issue.start !== undefined ? formatTime(issue.start) : ""}`.trim(),
+          where: (issue.facilityId ? FACILITY_BY_ID.get(issue.facilityId)?.name : undefined) ?? issue.title,
+          who: issue.eventIds.map((eventId) => eventById.get(eventId)?.cohort).filter(Boolean).join(", "),
+          detail: issue.detail,
+        }));
+    return { workable: build("workable"), "non-workable": build("non-workable") };
+  }, [termIssues, dataset.events]);
+  const workable = clashesBySeverity.workable.length;
+  const nonWorkable = clashesBySeverity["non-workable"].length;
+
+  const toggleClashes = (severity: ClashSeverity) =>
+    setOpenClashes((current) => (current === severity ? null : severity));
 
   return (
     <section className="sim-v2" aria-label="Simulator">
@@ -87,30 +129,30 @@ export function SimulatorView({
               </div>
             </div>
           </div>
-          <div className="sv-controls">
-            <label className="sv-pill">
-              <span>Term</span>
-              <select aria-label="Term" value={selection.term} onChange={(event) => onTermChange(event.target.value as TermId)}>
-                {TERMS.map((term) => <option key={term}>{term}</option>)}
-              </select>
-            </label>
-            <label className="sv-pill">
-              <span>Wk</span>
-              <select aria-label="Week" value={selection.week} onChange={(event) => onWeekChange(event.target.value as WeekId)}>
-                {WEEKS.map((week) => <option key={week}>{week}</option>)}
-              </select>
-            </label>
-            <label className="sv-pill sv-pill-day">
-              <span>Day</span>
-              <select aria-label="Day" value={selection.day} onChange={(event) => onDayChange(Number(event.target.value) as DayIndex)}>
-                {DAYS.map((day, index) => <option key={day} value={index}>{day}</option>)}
-              </select>
-            </label>
-          </div>
         </header>
 
         <div className="sv-main">
           <div className="sv-summary">
+            <div className="sv-controls">
+              <label className="sv-pill">
+                <span>Term</span>
+                <select aria-label="Term" value={selection.term} onChange={(event) => onTermChange(event.target.value as TermId)}>
+                  {TERMS.map((term) => <option key={term}>{term}</option>)}
+                </select>
+              </label>
+              <label className="sv-pill">
+                <span>Wk</span>
+                <select aria-label="Week" value={selection.week} onChange={(event) => onWeekChange(event.target.value as WeekId)}>
+                  {WEEKS.map((week) => <option key={week}>{week}</option>)}
+                </select>
+              </label>
+              <label className="sv-pill sv-pill-day">
+                <span>Day</span>
+                <select aria-label="Day" value={selection.day} onChange={(event) => onDayChange(Number(event.target.value) as DayIndex)}>
+                  {DAYS.map((day, index) => <option key={day} value={index}>{day}</option>)}
+                </select>
+              </label>
+            </div>
             <div className={`sv-summary-status ${clashesNow > 0 ? "is-clash" : "is-ok"}`}>
               {clashesNow > 0 ? <AlertTriangle size={17} /> : <CheckCircle2 size={17} />}
               <div>
@@ -119,8 +161,50 @@ export function SimulatorView({
               </div>
             </div>
             <div className="sv-summary-counts">
-              <div className="sv-count sv-count-workable"><span>Workable clashes</span><b>{workable}</b></div>
-              <div className="sv-count sv-count-nonworkable"><span>Non-workable clashes</span><b>{nonWorkable}</b></div>
+              <button
+                type="button"
+                className="sv-count sv-count-workable"
+                aria-expanded={openClashes === "workable"}
+                aria-label={`Workable clashes: ${workable}. Show details`}
+                onClick={() => toggleClashes("workable")}
+              >
+                <span>Workable clashes</span>
+                <span className="sv-count-val"><b>{workable}</b><Info size={13} aria-hidden="true" /></span>
+              </button>
+              <button
+                type="button"
+                className="sv-count sv-count-nonworkable"
+                aria-expanded={openClashes === "non-workable"}
+                aria-label={`Non-workable clashes: ${nonWorkable}. Show details`}
+                onClick={() => toggleClashes("non-workable")}
+              >
+                <span>Non{"‑"}workable clashes</span>
+                <span className="sv-count-val"><b>{nonWorkable}</b><Info size={13} aria-hidden="true" /></span>
+              </button>
+              {openClashes ? (
+                <div className="sv-clash-pop" role="dialog" aria-label={`${openClashes === "workable" ? "Workable" : "Non-workable"} clash details`}>
+                  <div className="sv-clash-pop-head">
+                    <strong>{openClashes === "workable" ? "Workable clashes" : "Non-workable clashes"}</strong>
+                    <button type="button" className="sv-clash-pop-close" aria-label="Close details" onClick={() => setOpenClashes(null)}>×</button>
+                  </div>
+                  {clashesBySeverity[openClashes].length === 0 ? (
+                    <p className="sv-clash-empty">No {openClashes === "workable" ? "workable" : "non-workable"} clashes this term.</p>
+                  ) : (
+                    <ul className="sv-clash-list">
+                      {clashesBySeverity[openClashes].map((clash) => (
+                        <li key={clash.id}>
+                          <div className="sv-clash-row">
+                            <span className="sv-clash-when">{clash.when}</span>
+                            <span className="sv-clash-where">{clash.where}</span>
+                          </div>
+                          {clash.who ? <div className="sv-clash-who">{clash.who}</div> : null}
+                          <div className="sv-clash-detail">{clash.detail}</div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
 
