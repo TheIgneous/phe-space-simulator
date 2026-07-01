@@ -22,6 +22,24 @@ interface FacilityTimelineProps {
 const shortCohort = (event: OccupancyEvent): string =>
   event.cohort.replace(/^Grade /, "Gr").replace(/ Boys$/, " B").replace(/ Girls$/, " G");
 
+/** Pack a lane's events into sub-rows so overlapping (clashing) bookings stack instead of colliding. */
+function stackRows(events: OccupancyEvent[]): { rowOf: Map<string, number>; rowCount: number } {
+  const sorted = [...events].sort((left, right) => left.start - right.start || left.end - right.end);
+  const rowEnds: number[] = [];
+  const rowOf = new Map<string, number>();
+  for (const event of sorted) {
+    let row = rowEnds.findIndex((end) => end <= event.start);
+    if (row === -1) {
+      row = rowEnds.length;
+      rowEnds.push(event.end);
+    } else {
+      rowEnds[row] = event.end;
+    }
+    rowOf.set(event.id, row);
+  }
+  return { rowOf, rowCount: Math.max(rowEnds.length, 1) };
+}
+
 export function FacilityTimeline({ dataset, selection, termIssues, onScrub }: FacilityTimelineProps) {
   const scrubRef = useRef<HTMLDivElement>(null);
 
@@ -128,24 +146,36 @@ export function FacilityTimeline({ dataset, selection, termIssues, onScrub }: Fa
                   const facility = FACILITY_BY_ID.get(datasetFacility.id) ?? datasetFacility;
                   const events = eventsByFacility.get(facility.id) ?? [];
                   const unavailable = isFacilityUnavailable(facility, selection.term);
+                  const { rowOf, rowCount } = stackRows(events);
                   return (
                     <div className="tl-lane" key={facility.id}>
                       <div className={`tl-lane-name${unavailable && events.length === 0 ? " tl-lane-name-muted" : ""}`}>{facility.name}</div>
-                      <div className={`tl-track${unavailable ? " tl-track-unavailable" : ""}`}>
+                      <div
+                        className={`tl-track${unavailable ? " tl-track-unavailable" : ""}`}
+                        style={rowCount > 1 ? { height: rowCount * 15 + 2 } : undefined}
+                      >
                         {unavailable && events.length === 0 ? (
                           <span className="tl-unavailable-text">{facility.unavailableReason ?? "Unavailable"}</span>
                         ) : (
-                          events.map((event) => (
-                            <div
-                              key={event.id}
-                              className={`tl-bar tl-bar-${barStatus(event)}`}
-                              style={{ left: `${pct(event.start)}%`, width: `${Math.max(pct(event.end) - pct(event.start), 1.5)}%` }}
-                              title={`${facility.name} · ${event.cohort} · ${event.activity} · ${formatTime(event.start)}–${formatTime(event.end)}`}
-                              aria-label={`${facility.name}: ${event.cohort} ${event.activity} ${formatTime(event.start)} to ${formatTime(event.end)}`}
-                            >
-                              {shortCohort(event)}
-                            </div>
-                          ))
+                          events.map((event) => {
+                            const row = rowOf.get(event.id) ?? 0;
+                            return (
+                              <div
+                                key={event.id}
+                                className={`tl-bar tl-bar-${barStatus(event)}`}
+                                style={{
+                                  left: `${pct(event.start)}%`,
+                                  width: `${Math.max(pct(event.end) - pct(event.start), 1.5)}%`,
+                                  top: `calc(${(row / rowCount) * 100}% + 2px)`,
+                                  height: `calc(${100 / rowCount}% - 4px)`,
+                                }}
+                                title={`${facility.name} · ${event.cohort} · ${event.activity} · ${formatTime(event.start)}–${formatTime(event.end)}`}
+                                aria-label={`${facility.name}: ${event.cohort} ${event.activity} ${formatTime(event.start)} to ${formatTime(event.end)}`}
+                              >
+                                {shortCohort(event)}
+                              </div>
+                            );
+                          })
                         )}
                       </div>
                     </div>

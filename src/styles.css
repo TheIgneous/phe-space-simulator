@@ -533,7 +533,7 @@ button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-v
 .sim-v2 .tl-track { position: relative; flex: 1; height: 24px; background: #f5f7fa; border-radius: 5px; }
 .sim-v2 .tl-track-unavailable { background: repeating-linear-gradient(45deg,#f7f1e1,#f7f1e1 5px,#fbf6ea 5px,#fbf6ea 10px); }
 .sim-v2 .tl-unavailable-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: #b07d1a; }
-.sim-v2 .tl-bar { position: absolute; top: 2px; bottom: 2px; display: flex; align-items: center; padding: 0 6px; border-radius: 4px; font-size: 9px; font-weight: 600; overflow: hidden; white-space: nowrap; }
+.sim-v2 .tl-bar { position: absolute; box-sizing: border-box; min-height: 11px; display: flex; align-items: center; padding: 0 6px; border-radius: 4px; font-size: 9px; font-weight: 600; overflow: hidden; white-space: nowrap; }
 .sim-v2 .tl-bar-primary { background: #dfe7f1; border: 1px solid #b9c7dc; color: #42587a; }
 .sim-v2 .tl-bar-secondary { background: #dcebe7; border: 1px solid #b3d2c9; color: #37706a; }
 .sim-v2 .tl-bar-existing { background: #eceff3; border: 1px solid #d4dae2; color: #6b7686; }
