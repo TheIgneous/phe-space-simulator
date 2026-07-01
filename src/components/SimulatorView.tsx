@@ -69,6 +69,24 @@ export function SimulatorView({
             <div className="sv-brand-name">PHE Space Simulator</div>
             <div className="sv-brand-sub">AY {dataset.metadata.academicYear} · space validation</div>
           </div>
+          <div className="sv-move">
+            <div className="sv-now">
+              <div className="sv-eyebrow">Now</div>
+              <div className="sv-clock">{formatTime(selection.time)}</div>
+              <div className="sv-now-sub">{DAYS[selection.day]} · {selection.term} · Wk {selection.week}</div>
+            </div>
+            <div className="sv-playgroup">
+              <button type="button" className="sv-play" aria-pressed={isPlaying} onClick={onPlayToggle}>
+                {isPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
+                {isPlaying ? "Pause" : "Play"}
+              </button>
+              <div className="sv-transport">
+                <button type="button" aria-label="Previous timetable boundary" onClick={() => onStep(-1)}><SkipBack size={14} /></button>
+                <button type="button" aria-label="Next timetable boundary" onClick={() => onStep(1)}><SkipForward size={14} /></button>
+                <button type="button" aria-label="Reset" onClick={onReset}><RotateCcw size={14} /></button>
+              </div>
+            </div>
+          </div>
           <div className="sv-controls">
             <label className="sv-pill">
               <span>Term</span>
@@ -91,71 +109,46 @@ export function SimulatorView({
           </div>
         </header>
 
-        <div className="sv-body">
-          {/* left rail */}
-          <aside className="sv-rail">
-            <div className="sv-now">
-              <div className="sv-eyebrow">Now</div>
-              <div className="sv-clock">{formatTime(selection.time)}</div>
-              <div className="sv-now-sub">{DAYS[selection.day]} · {selection.term} · Wk {selection.week}</div>
-            </div>
-            <button type="button" className="sv-play" aria-pressed={isPlaying} onClick={onPlayToggle}>
-              {isPlaying ? <Pause size={14} fill="currentColor" /> : <Play size={14} fill="currentColor" />}
-              {isPlaying ? "Pause" : "Play"}
-            </button>
-            <div className="sv-transport">
-              <button type="button" aria-label="Previous timetable boundary" onClick={() => onStep(-1)}><SkipBack size={14} /></button>
-              <button type="button" aria-label="Next timetable boundary" onClick={() => onStep(1)}><SkipForward size={14} /></button>
-              <button type="button" aria-label="Reset" onClick={onReset}><RotateCcw size={14} /></button>
-            </div>
-            <p className="sv-hint">Click or drag the lanes to scrub, step through boundaries, or press Play to sweep the day.</p>
-
-            <div className="sv-rail-section">
-              <div className="sv-eyebrow">Term checks</div>
-              <div className="sv-check"><span className="sv-dot sv-dot-ok" />Tennis available all school day</div>
-              <div className="sv-check"><span className="sv-dot sv-dot-ok" />Main + Side Pools may overlap</div>
-              <div className="sv-check"><span className="sv-dot sv-dot-warn" />Outdoor EY Pool closed T1a/T3b</div>
-            </div>
-
-            {dataset.warnings.length > 0 ? (
-              <div className="sv-rail-section">
-                <button type="button" className="sv-warn-toggle" aria-expanded={showWarnings} onClick={() => setShowWarnings((open) => !open)}>
-                  <Info size={13} /> {dataset.warnings.length} source-data warning{dataset.warnings.length === 1 ? "" : "s"}
-                </button>
-                {showWarnings ? (
-                  <ul className="sv-warn-list">
-                    {dataset.warnings.slice(0, 12).map((warning) => <li key={warning.id}>{warning.message}</li>)}
-                  </ul>
-                ) : null}
-              </div>
-            ) : null}
-          </aside>
-
-          {/* main */}
-          <div className="sv-main">
-            <div className="sv-summary">
-              <div className={`sv-summary-status ${clashesNow > 0 ? "is-clash" : "is-ok"}`}>
-                {clashesNow > 0 ? <AlertTriangle size={17} /> : <CheckCircle2 size={17} />}
-                <div>
-                  <strong>{clashesNow > 0 ? `${clashesNow} clash${clashesNow === 1 ? "" : "es"} at ${formatTime(selection.time)}` : `No clashes at ${formatTime(selection.time)}`}</strong>
-                  <small>{freeNow} of {totalSpaces} spaces free right now</small>
-                </div>
-              </div>
-              <div className="sv-summary-counts">
-                <div className="sv-count sv-count-workable"><span>Workable clashes</span><b>{workable}</b></div>
-                <div className="sv-count sv-count-nonworkable"><span>Non-workable clashes</span><b>{nonWorkable}</b></div>
+        <div className="sv-main">
+          <div className="sv-summary">
+            <div className={`sv-summary-status ${clashesNow > 0 ? "is-clash" : "is-ok"}`}>
+              {clashesNow > 0 ? <AlertTriangle size={17} /> : <CheckCircle2 size={17} />}
+              <div>
+                <strong>{clashesNow > 0 ? `${clashesNow} clash${clashesNow === 1 ? "" : "es"} at ${formatTime(selection.time)}` : `No clashes at ${formatTime(selection.time)}`}</strong>
+                <small>{freeNow} of {totalSpaces} spaces free right now</small>
               </div>
             </div>
-
-            <FacilityTimeline dataset={dataset} selection={selection} termIssues={termIssues} onScrub={onScrub} />
+            <div className="sv-summary-counts">
+              <div className="sv-count sv-count-workable"><span>Workable clashes</span><b>{workable}</b></div>
+              <div className="sv-count sv-count-nonworkable"><span>Non-workable clashes</span><b>{nonWorkable}</b></div>
+            </div>
           </div>
+
+          <FacilityTimeline dataset={dataset} selection={selection} termIssues={termIssues} onScrub={onScrub} />
         </div>
 
         {/* footer */}
         <footer className="sv-foot">
-          <div className="sv-foot-meta">
-            <span>Sanitized snapshot · {new Date(dataset.metadata.generatedAt).toLocaleDateString("en-GB")}</span>
-            <span>{dataset.metadata.sources.map((source) => source.name).join(" · ")}</span>
+          <div className="sv-foot-checks">
+            <div className="sv-foot-checkrow">
+              <span className="sv-check"><span className="sv-dot sv-dot-ok" />Tennis available all day</span>
+              <span className="sv-check"><span className="sv-dot sv-dot-ok" />Main + Side Pools may overlap</span>
+              <span className="sv-check"><span className="sv-dot sv-dot-warn" />EY Pool closed T1a/T3b</span>
+              {dataset.warnings.length > 0 ? (
+                <button type="button" className="sv-warn-toggle" aria-expanded={showWarnings} onClick={() => setShowWarnings((open) => !open)}>
+                  <Info size={13} /> {dataset.warnings.length} source-data warning{dataset.warnings.length === 1 ? "" : "s"}
+                </button>
+              ) : null}
+            </div>
+            {showWarnings && dataset.warnings.length > 0 ? (
+              <ul className="sv-warn-list">
+                {dataset.warnings.slice(0, 12).map((warning) => <li key={warning.id}>{warning.message}</li>)}
+              </ul>
+            ) : null}
+            <div className="sv-foot-meta">
+              <span>Sanitized snapshot · {new Date(dataset.metadata.generatedAt).toLocaleDateString("en-GB")}</span>
+              <span>{dataset.metadata.sources.map((source) => source.name).join(" · ")}</span>
+            </div>
           </div>
           <TimetableImport dataset={dataset} onImport={onImport} />
         </footer>
